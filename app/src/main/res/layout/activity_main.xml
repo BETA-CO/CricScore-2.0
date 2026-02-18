@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?android:attr/colorBackground">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
+        tools:context=".MainActivity">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="48dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:strokeWidth="0dp"
+                android:layout_marginBottom="16dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:tint="?attr/colorOnPrimaryContainer" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CricScore"
+                android:textSize="44sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage Track &amp; Have Fun"
+                android:textSize="14sp"
+                android:alpha="0.6"
+                android:letterSpacing="0.1"
+                android:textAllCaps="true"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Primary Action -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStartMatch"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:text="Start New Match"
+            android:textSize="18sp"
+            app:cornerRadius="36dp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHistory"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="Match History"
+            app:cornerRadius="32dp"
+            app:icon="@android:drawable/ic_menu_recent_history"
+            app:iconGravity="textStart"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRules"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="Basic Rules"
+            app:cornerRadius="32dp"
+            app:icon="@android:drawable/ic_menu_info_details"
+            app:iconGravity="textStart"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Latest Match Summary (Dynamic) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvLastMatch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Latest Result"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/tvLastMatchTeams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Team A vs Team B"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tvLastMatchWinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Winner: Team A"
+                    android:alpha="0.7"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Spacer to push version to bottom -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="v1.0.0"
+            android:textSize="12sp"
+            android:alpha="0.4"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
