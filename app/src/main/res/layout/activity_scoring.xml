@@ -1,88 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Live Score"
-            app:titleCentered="true" />
-    </com.google.android.material.appbar.AppBarLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="16dp">
 
+        <!-- SCOREBOARD CARD -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorOutlineVariant">
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="?attr/colorPrimary"
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:padding="20dp">
 
                 <TextView
                     android:id="@+id/tvCurrentInnings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Team A Batting"
-                    android:textSize="16sp"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.9"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/tvScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0/0"
-                    android:textSize="56sp"
+                    android:textSize="64sp"
                     android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:textColor="?attr/colorOnPrimary"/>
 
                 <TextView
                     android:id="@+id/tvOvers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Overs: 0.0 / 5"
-                    android:textSize="18sp"
-                    android:layout_marginTop="4dp"/>
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.8"
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/tvRunRate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CRR: 0.00"
-                    android:textSize="14sp"
-                    android:alpha="0.7"/>
-
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:alpha="0.8"/>
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- PLAYER INFO CARD -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="?attr/colorSurface"
             app:strokeWidth="1dp"
             app:strokeColor="?attr/colorOutlineVariant">
 
@@ -90,103 +81,135 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="12dp">
+                android:padding="14dp">
+
                 <TextView
                     android:id="@+id/tvStriker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Striker: Select"
-                    android:textSize="14sp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:text="🏏 Striker: Select"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textStyle="bold"/>
+
                 <TextView
                     android:id="@+id/tvNonStriker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Non-Striker: Select"
-                    android:textSize="14sp"
-                    android:layout_marginTop="4dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"/>
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginTop="4dp"/>
+
                 <TextView
                     android:id="@+id/tvBowler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Bowler: Select"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    android:textColor="?attr/colorPrimary"/>
+                    android:text="🎯 Bowler: Select"
+                    android:textColor="?attr/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"/>
 
                 <TextView
                     android:id="@+id/tvThisOver"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="This Over: "
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:alpha="0.7"/>
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- SCORING GRID -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginTop="14dp"
             android:columnCount="3"
             android:rowCount="3"
             android:useDefaultMargins="true">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn0" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="0" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn1" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="1" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn2" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="2" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn3" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="3" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn4" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="4" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn6" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="6" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnWide" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="WD" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNoBall" style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="NB" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnWicket" style="@style/Widget.Material3.Button"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_columnWeight="1" android:text="W"
-                app:backgroundTint="?attr/colorError" />
+                android:id="@+id/btn0"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="0"/>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn1"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn2"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="2"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn3"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="3"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn4"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="4"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn6"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="6"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWide"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="WD"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNoBall"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="NB"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWicket"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="W"
+                app:backgroundTint="?attr/colorSecondary"/>
         </GridLayout>
 
+        <!-- ACTION BUTTONS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="12dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUndo"
@@ -203,7 +226,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Finish Innings"/>
+                android:text="Finish"
+                app:backgroundTint="?attr/colorPrimaryContainer"
+                app:rippleColor="?attr/colorPrimary"/>
         </LinearLayout>
 
     </LinearLayout>

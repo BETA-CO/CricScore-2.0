@@ -1,7 +1,32 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.CricScore" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+    <style name="Base.Theme.CricScore" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Light Theme Colors -->
+        <item name="colorPrimary">@color/light_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/light_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/light_primary</item>
+        <item name="colorSecondary">@color/light_accent_red</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background and Surface -->
+        <item name="android:windowBackground">@color/light_background</item>
+        <item name="colorOnBackground">@color/light_text_primary</item>
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnSurface">@color/light_text_primary</item>
+        <item name="colorSurfaceVariant">@color/light_elevated_surface</item>
+        <item name="colorOnSurfaceVariant">@color/light_text_secondary</item>
+
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/light_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Outlines -->
+        <item name="colorOutline">#C4C7CF</item>
+
+        <!-- Main Text -->
+        <item name="android:textColorPrimary">@color/light_text_primary</item>
+        <item name="android:textColorSecondary">@color/light_text_secondary</item>
     </style>
 
     <style name="Theme.CricScore" parent="Base.Theme.CricScore" />

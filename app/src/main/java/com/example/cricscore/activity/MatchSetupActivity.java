@@ -40,6 +40,7 @@ public class MatchSetupActivity extends AppCompatActivity {
             intent.putExtra("totalOvers", Integer.parseInt(oversStr));
             intent.putExtra("setupForTeamA", true);
             startActivity(intent);
+            finish(); // Finish this activity to remove it from backstack
         });
 
         findViewById(R.id.btnDummy).setOnClickListener(v -> {

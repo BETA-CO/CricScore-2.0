@@ -1,69 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="The Toss"
-            app:titleCentered="true" />
-    </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:padding="24dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="24dp">
+
+        <!-- TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Toss"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Who won the toss?"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
+            android:text="Who wins the toss?"
+            android:textSize="15sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="28dp"/>
 
+        <!-- COIN STYLE BUTTON -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFlip"
             style="@style/Widget.Material3.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Flip Coin" />
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:text="Flip Coin"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            app:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
+            app:cornerRadius="90dp"/>
 
+        <!-- RESULT CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cvTossResult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="28dp"
             android:visibility="gone"
-            app:cardBackgroundColor="?attr/colorSecondaryContainer">
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardElevation="6dp">
+
             <TextView
                 android:id="@+id/tvTossResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp"
+                android:padding="22dp"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnSecondaryContainer"/>
+                android:textColor="?android:attr/textColorPrimary"/>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- START BUTTON -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartScoring"
             style="@style/Widget.Material3.Button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="26dp"
             android:text="Start Scoring"
-            android:visibility="gone" />
+            android:textStyle="bold"
+            app:backgroundTint="?attr/colorPrimaryContainer"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            app:cornerRadius="18dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

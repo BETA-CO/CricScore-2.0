@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cricscore.R;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PlayersSetupActivity extends AppCompatActivity {
     private String teamA, teamB;
     private int playerCount, totalOvers;
     private boolean setupForTeamA;
-    private String playersA; 
+    private String playersA;
     private List<EditText> editTexts = new ArrayList<>();
 
     @Override
@@ -33,14 +34,23 @@ public class PlayersSetupActivity extends AppCompatActivity {
         setupForTeamA = getIntent().getBooleanExtra("setupForTeamA", true);
         playersA = getIntent().getStringExtra("playersA");
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Enter " + (setupForTeamA ? teamA : teamB) + " Players");
+        // Update labels based on which team we are setting up
+        TextView tvTitle = findViewById(R.id.tvEnterPlayersTitle);
+        TextView tvSubtitle = findViewById(R.id.tvEnterPlayersSubtitle);
 
-        LinearLayout container = findViewById(R.id.llPlayersContainer);
-        
+        String currentTeam = setupForTeamA ? teamA : teamB;
+        if (tvTitle != null) {
+            tvTitle.setText(currentTeam + " Players");
+        }
+        if (tvSubtitle != null) {
+            tvSubtitle.setText("Enter names for " + currentTeam);
+        }
+
+        LinearLayout fieldsHolder = findViewById(R.id.playerFieldsHolder);
+
         for (int i = 1; i <= playerCount; i++) {
             TextInputLayout inputLayout = new TextInputLayout(this, null, com.google.android.material.R.style.Widget_Material3_TextInputLayout_OutlinedBox);
-            inputLayout.setHint("Enter Player " + i);
+            inputLayout.setHint("Player " + i);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -51,11 +61,10 @@ public class PlayersSetupActivity extends AppCompatActivity {
             EditText editText = new EditText(this);
             editText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS);
             inputLayout.addView(editText);
-            
-            // Add before the buttons
-            int insertIndex = container.getChildCount() - 2; 
-            if (insertIndex < 0) insertIndex = 0;
-            container.addView(inputLayout, insertIndex);
+
+            if (fieldsHolder != null) {
+                fieldsHolder.addView(inputLayout);
+            }
             editTexts.add(editText);
         }
 
@@ -64,7 +73,7 @@ public class PlayersSetupActivity extends AppCompatActivity {
             for (int i = 0; i < editTexts.size(); i++) {
                 String name = editTexts.get(i).getText().toString().trim();
                 if (name.isEmpty()) {
-                    name = (setupForTeamA ? teamA : teamB) + " Player " + (i + 1);
+                    name = currentTeam + " Player " + (i + 1);
                 }
                 names.append(name);
                 if (i < editTexts.size() - 1) names.append(",");
@@ -79,6 +88,7 @@ public class PlayersSetupActivity extends AppCompatActivity {
                 intent.putExtra("setupForTeamA", false);
                 intent.putExtra("playersA", names.toString());
                 startActivity(intent);
+                finish();
             } else {
                 Intent intent = new Intent(PlayersSetupActivity.this, TossActivity.class);
                 intent.putExtra("teamA", teamA);
@@ -88,13 +98,13 @@ public class PlayersSetupActivity extends AppCompatActivity {
                 intent.putExtra("playersA", playersA);
                 intent.putExtra("playersB", names.toString());
                 startActivity(intent);
+                finish();
             }
         });
 
         findViewById(R.id.btnDummyPlayers).setOnClickListener(v -> {
-            String teamName = setupForTeamA ? teamA : teamB;
             for (int i = 0; i < editTexts.size(); i++) {
-                editTexts.get(i).setText(teamName + " Star " + (i + 1));
+                editTexts.get(i).setText(currentTeam + " Star " + (i + 1));
             }
         });
     }

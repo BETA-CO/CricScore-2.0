@@ -2,4 +2,24 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="dark_background">#0D0B16</color>
+    <color name="dark_surface">#1B182A</color>
+    <color name="dark_elevated_surface">#25213A</color>
+    <color name="dark_primary">#1F5D2B</color>
+    <color name="dark_primary_container">#2E7A3D</color>
+    <color name="dark_accent_red">#C62828</color>
+    <color name="dark_text_primary">#F5F3FF</color>
+    <color name="dark_text_secondary">#B8B2CC</color>
+
+    <!-- Light Theme Colors -->
+    <color name="light_background">#F8F9FC</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_elevated_surface">#F1F3F6</color>
+    <color name="light_primary">#1F5D2B</color>
+    <color name="light_primary_container">#DCEFD9</color>
+    <color name="light_accent_red">#C62828</color>
+    <color name="light_text_primary">#1B1B1F</color>
+    <color name="light_text_secondary">#666C7A</color>
 </resources>

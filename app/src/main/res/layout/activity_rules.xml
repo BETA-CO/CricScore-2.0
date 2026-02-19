@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="?android:attr/colorBackground"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- TITLE -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Basic Cricket Rules"
-            android:textSize="24sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="28sp"
             android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+        <!-- SUBTITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quick guide for local matches"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"
             android:layout_marginBottom="16dp"/>
 
-        <TextView
+        <!-- RULES CARD -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="1. Two teams of 11 players each (local matches can vary).\n\n2. The objective is to score more runs than the opposing team.\n\n3. An innings ends when 10 wickets fall or the allotted overs are completed.\n\n4. Runs can be scored by hitting the ball and running between wickets, or by hitting boundaries (4s and 6s).\n\n5. Extras include Wides, No Balls, Byes, and Leg Byes.\n\n6. A bowler bowls 6 legal deliveries to complete an over.\n\n7. The team batting second chases the target set by the first team (Target = Team 1 Score + 1)."
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp"/>
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="4dp"
+            android:padding="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:text="1. Two teams of 11 players each (local matches can vary).\n\n2. The objective is to score more runs than the opposing team.\n\n3. An innings ends when 10 wickets fall or the allotted overs are completed.\n\n4. Runs can be scored by hitting the ball and running between wickets, or by boundaries (4s and 6s).\n\n5. Extras include Wides, No Balls, Byes, and Leg Byes.\n\n6. A bowler bowls 6 legal deliveries to complete an over.\n\n7. The team batting second chases the target (Target = Team 1 Score + 1)."
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="16sp"
+                android:lineSpacingExtra="8dp"/>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
+
 </ScrollView>

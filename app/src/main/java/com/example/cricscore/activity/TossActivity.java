@@ -70,7 +70,7 @@ public class TossActivity extends AppCompatActivity {
             intent.putExtra("maxWicketsA", playerCount - 1);
             intent.putExtra("maxWicketsB", playerCount - 1);
             startActivity(intent);
-            finish();
+            finish(); // Finish TossActivity so user can't go back to it
         });
     }
 
@@ -91,7 +91,6 @@ public class TossActivity extends AppCompatActivity {
     }
 
     private void updateTossResultUI(String choice) {
-        String bowlingTeam = tossWinner.equals(teamA) ? teamB : teamA;
         String decisionText = tossWinner + " won the toss and chose to " + choice + " first.";
         
         tvTossResult.setText(decisionText);

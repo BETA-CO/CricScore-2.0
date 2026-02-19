@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="8dp">
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <TextView
-            android:id="@+id/tvStatName"
-            android:layout_width="0dp"
+        <!-- TOP ROW -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Player Name"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvStatRuns"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 (0)"
-            android:layout_marginEnd="16dp"
-            android:textColor="?attr/colorOnSurface" />
+            <TextView
+                android:id="@+id/tvStatName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Player Name"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="15sp"/>
 
+            <TextView
+                android:id="@+id/tvStatRuns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 (0)"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="14sp"
+                android:layout_marginEnd="14dp"/>
+
+            <TextView
+                android:id="@+id/tvStatSR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SR 0.0"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- DISMISSAL -->
         <TextView
-            android:id="@+id/tvStatSR"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvStatDismissal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SR: 0.0"
+            android:text="Not Out"
             android:textSize="12sp"
-            android:alpha="0.7" />
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="3dp"/>
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvStatDismissal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Not Out"
-        android:textSize="12sp"
-        android:fontStyle="italic"
-        android:alpha="0.6"
-        android:layout_marginTop="2dp" />
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

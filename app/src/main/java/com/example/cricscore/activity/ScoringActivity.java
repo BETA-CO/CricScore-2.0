@@ -2,6 +2,7 @@ package com.example.cricscore.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import java.util.Set;
 public class ScoringActivity extends AppCompatActivity {
 
     private String teamA, teamB;
-    private List<String> playersA, playersB;
+    private List<String> playersA = new ArrayList<>(), playersB = new ArrayList<>();
     private int totalOvers;
     private int maxWicketsA, maxWicketsB;
     
@@ -129,55 +130,35 @@ public class ScoringActivity extends AppCompatActivity {
         tvBowler = findViewById(R.id.tvBowler);
         tvThisOver = findViewById(R.id.tvThisOver);
 
-        tvStriker.setOnClickListener(v -> {
-            if (isOverStart() || canChangeStriker()) {
-                showPlayerPicker(0);
-            } else {
-                Toast.makeText(this, "Cannot change striker after he has played a ball", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvNonStriker.setOnClickListener(v -> {
-            if (isOverStart() || canChangeNonStriker()) {
-                showPlayerPicker(1);
-            } else {
-                Toast.makeText(this, "Cannot change non-striker after he has played a ball", Toast.LENGTH_SHORT).show();
-            }
-        });
-        tvBowler.setOnClickListener(v -> {
-            if (isOverStart()) {
-                showPlayerPicker(2);
-            } else {
-                Toast.makeText(this, "Cannot change bowler after ball is played", Toast.LENGTH_SHORT).show();
-            }
-        });
+        tvStriker.setOnClickListener(v -> showPlayerPicker(0));
+        tvNonStriker.setOnClickListener(v -> showPlayerPicker(1));
+        tvBowler.setOnClickListener(v -> showPlayerPicker(2));
 
         updateUI();
         setupButtons();
 
         findViewById(R.id.btnFinishInnings).setOnClickListener(v -> {
             if (isInnings1) {
-                saveState();
-                startSecondInnings();
+                new AlertDialog.Builder(this)
+                        .setTitle("Finish Innings?")
+                        .setMessage("Are you sure you want to end the first innings?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            saveState();
+                            startSecondInnings();
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             } else {
-                saveMatch();
+                new AlertDialog.Builder(this)
+                        .setTitle("Finish Match?")
+                        .setMessage("Are you sure you want to end the match?")
+                        .setPositiveButton("Yes", (dialog, which) -> saveMatch())
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
 
         findViewById(R.id.btnUndo).setOnClickListener(v -> undo());
-    }
-
-    private boolean isOverStart() {
-        return currentOverHistory.isEmpty();
-    }
-
-    private boolean canChangeStriker() {
-        String key = getPlayerKey(currentStriker, isInnings1);
-        return playerBallsPlayed.getOrDefault(key, 0) == 0;
-    }
-
-    private boolean canChangeNonStriker() {
-        String key = getPlayerKey(currentNonStriker, isInnings1);
-        return playerBallsPlayed.getOrDefault(key, 0) == 0;
     }
 
     private String getPlayerKey(String playerName, boolean isTeamA) {
@@ -227,9 +208,11 @@ public class ScoringActivity extends AppCompatActivity {
     private List<String> parsePlayers(String pStr, String teamName, int count) {
         List<String> result = new ArrayList<>();
         if (pStr != null && !pStr.trim().isEmpty()) {
-            String[] names = pStr.split("\\s*,\\s*");
-            for (int i = 0; i < Math.min(names.length, count); i++) {
-                result.add(names[i]);
+            String[] names = pStr.split(",");
+            for (String name : names) {
+                if (!name.trim().isEmpty()) {
+                    result.add(name.trim());
+                }
             }
         }
         while (result.size() < count) {
