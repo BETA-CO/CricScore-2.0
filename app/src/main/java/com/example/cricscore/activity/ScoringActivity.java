@@ -35,6 +35,7 @@ public class ScoringActivity extends AppCompatActivity {
     private int scoreA = 0, wicketsA = 0, ballsA = 0;
     private int scoreB = 0, wicketsB = 0, ballsB = 0;
     private boolean isInnings1 = true;
+    private boolean isSuperOver = false;
 
     private String currentStriker = "Select";
     private String currentNonStriker = "Select";
@@ -431,18 +432,59 @@ public class ScoringActivity extends AppCompatActivity {
         if (scoreB > scoreA) {
             saveMatch();
         } else if (wicketsB >= maxWicketsB || ballsB >= totalOvers * 6) {
-            saveMatch();
+            if (scoreA == scoreB) {
+                showSuperOverDialog();
+            } else {
+                saveMatch();
+            }
         }
     }
 
+    private void showSuperOverDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Match Drawn!")
+                .setMessage("Scores are level! Would you like to play a Super Over (1 Over) to decide the winner?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", (dialog, which) -> startSuperOver())
+                .setNegativeButton("No", (dialog, which) -> saveMatch())
+                .show();
+    }
+
+    private void startSuperOver() {
+        isSuperOver = true;
+        isInnings1 = true;
+        totalOvers = 1;
+        maxWicketsA = 2; // Super over standard
+        maxWicketsB = 2;
+        
+        scoreA = 0; wicketsA = 0; ballsA = 0;
+        scoreB = 0; wicketsB = 0; ballsB = 0;
+        
+        currentStriker = "Select";
+        currentNonStriker = "Select";
+        currentBowler = "Select";
+        currentOverHistory.clear();
+        outPlayers.clear();
+        batsmanRuns.clear();
+        playerBallsPlayed.clear();
+        playerDismissal.clear();
+        bowlerRunsMap.clear();
+        bowlerWicketsMap.clear();
+        history.clear();
+        
+        updateUI();
+        Toast.makeText(this, "SUPER OVER STARTED!", Toast.LENGTH_SHORT).show();
+    }
+
     private void updateUI() {
+        String inningsTitle = isSuperOver ? "SUPER OVER: " : "";
         if (isInnings1) {
-            tvCurrentInnings.setText(teamA + " Batting");
+            tvCurrentInnings.setText(inningsTitle + teamA + " Batting");
             tvScore.setText(scoreA + "/" + wicketsA);
             tvOvers.setText("Overs: " + getOvers(ballsA) + " / " + totalOvers);
             tvRunRate.setText("CRR: " + String.format(Locale.US, "%.2f", getRunRate(scoreA, ballsA)));
         } else {
-            tvCurrentInnings.setText(teamB + " Batting (Target: " + (scoreA + 1) + ")");
+            tvCurrentInnings.setText(inningsTitle + teamB + " Batting (Target: " + (scoreA + 1) + ")");
             tvScore.setText(scoreB + "/" + wicketsB);
             tvOvers.setText("Overs: " + getOvers(ballsB) + " / " + totalOvers);
             tvRunRate.setText("CRR: " + String.format(Locale.US, "%.2f", getRunRate(scoreB, ballsB)));
@@ -489,6 +531,10 @@ public class ScoringActivity extends AppCompatActivity {
         else if (scoreA > scoreB) winner = teamA;
         else winner = "Draw";
 
+        if (isSuperOver && !winner.equals("Draw")) {
+            winner += " (Super Over)";
+        }
+
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         
         double finalOversA = Double.parseDouble(getOvers(ballsA));
@@ -504,12 +550,13 @@ public class ScoringActivity extends AppCompatActivity {
         Match match = new Match(teamA, teamB, scoreA, wicketsA, finalOversA,
                                 scoreB, wicketsB, finalOversB, winner, date,
                                 statsAJson, statsBJson);
-        
+
+        String finalWinner = winner;
         new Thread(() -> {
             db.matchDao().insert(match);
             runOnUiThread(() -> {
                 Intent intent = new Intent(ScoringActivity.this, ResultActivity.class);
-                intent.putExtra("winner", winner);
+                intent.putExtra("winner", finalWinner);
                 intent.putExtra("teamA", teamA);
                 intent.putExtra("teamB", teamB);
                 intent.putExtra("scoreA", scoreA);
