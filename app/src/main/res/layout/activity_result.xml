@@ -36,12 +36,59 @@
                     android:textAlignment="center"/>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- SUPER OVER SUMMARY (HIDDEN BY DEFAULT) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvSuperOver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorSecondary">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SUPER OVER RESULT"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorSecondary"
+                        android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/tvSuperOverScores"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Team A: 10/1 | Team B: 11/0"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?android:attr/textColorPrimary"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MAIN MATCH HEADING -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Main Match Scorecard"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:alpha="0.6"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="4dp"
+                android:textAllCaps="true"/>
 
             <!-- TEAM A CARD -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 app:cardCornerRadius="20dp"
                 app:cardBackgroundColor="?attr/colorSurface"
                 app:cardElevation="4dp"

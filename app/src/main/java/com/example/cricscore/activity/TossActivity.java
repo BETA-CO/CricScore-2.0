@@ -2,7 +2,11 @@ package com.example.cricscore.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +23,10 @@ public class TossActivity extends AppCompatActivity {
     private String teamA, teamB, playersA, playersB;
     private int playerCount, totalOvers;
     private TextView tvTossResult;
-    private MaterialButton btnStartScoring;
+    private MaterialButton btnStartScoring, btnFlip;
     private String tossWinner;
     private String battingTeam;
+    private boolean isFlipping = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +42,11 @@ public class TossActivity extends AppCompatActivity {
         
         tvTossResult = findViewById(R.id.tvTossResult);
         btnStartScoring = findViewById(R.id.btnStartScoring);
+        btnFlip = findViewById(R.id.btnFlip);
 
-        findViewById(R.id.btnFlip).setOnClickListener(v -> {
-            Random random = new Random();
-            tossWinner = random.nextBoolean() ? teamA : teamB;
-            
-            showTossDialog();
+        btnFlip.setOnClickListener(v -> {
+            if (isFlipping) return;
+            startCoinFlip();
         });
 
         btnStartScoring.setOnClickListener(v -> {
@@ -53,7 +57,6 @@ public class TossActivity extends AppCompatActivity {
 
             Intent intent = new Intent(TossActivity.this, ScoringActivity.class);
             
-            // Re-order teams if Team B is batting first
             if (battingTeam.equals(teamB)) {
                 intent.putExtra("teamA", teamB);
                 intent.putExtra("teamB", teamA);
@@ -70,8 +73,55 @@ public class TossActivity extends AppCompatActivity {
             intent.putExtra("maxWicketsA", playerCount - 1);
             intent.putExtra("maxWicketsB", playerCount - 1);
             startActivity(intent);
-            finish(); // Finish TossActivity so user can't go back to it
+            finish();
         });
+    }
+
+    private void startCoinFlip() {
+        isFlipping = true;
+        btnFlip.setEnabled(false);
+        findViewById(R.id.cvTossResult).setVisibility(View.GONE);
+        btnStartScoring.setVisibility(View.GONE);
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        final int flipCount = 25; 
+        final long flipDelay = 120; 
+
+        for (int i = 0; i < flipCount; i++) {
+            final int index = i;
+            handler.postDelayed(() -> {
+                btnFlip.setText(index % 2 == 0 ? "HEADS" : "TAILS");
+                btnFlip.animate()
+                        .rotationYBy(180)
+                        .setDuration(flipDelay)
+                        .setInterpolator(new LinearInterpolator())
+                        .start();
+            }, i * flipDelay);
+        }
+
+        // Final land animation
+        handler.postDelayed(this::finalizeToss, flipCount * flipDelay);
+    }
+
+    private void finalizeToss() {
+        Random random = new Random();
+        boolean heads = random.nextBoolean();
+        tossWinner = heads ? teamA : teamB;
+        
+        // Final "landing" flip to bring it to a flat stop
+        btnFlip.animate()
+                .rotationYBy(180)
+                .setDuration(500)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(() -> {
+                    btnFlip.setText(heads ? "HEADS" : "TAILS");
+                    btnFlip.setRotationY(0); // Ensure perfectly flat (0 degrees)
+                    btnFlip.setEnabled(true);
+                    isFlipping = false;
+                    
+                    new Handler(Looper.getMainLooper()).postDelayed(this::showTossDialog, 600);
+                })
+                .start();
     }
 
     private void showTossDialog() {
@@ -91,10 +141,15 @@ public class TossActivity extends AppCompatActivity {
     }
 
     private void updateTossResultUI(String choice) {
-        String decisionText = tossWinner + " won the toss and chose to " + choice + " first.";
+        String choiceDisplay = choice.equals("Bat") ? "BAT" : "BOWL";
+        String decisionText = tossWinner + " won the toss and chose to " + choiceDisplay + " first.";
         
         tvTossResult.setText(decisionText);
         findViewById(R.id.cvTossResult).setVisibility(View.VISIBLE);
         btnStartScoring.setVisibility(View.VISIBLE);
+        
+        // Reset coin to original flat state with "FLIP COIN" text
+        btnFlip.setText("FLIP COIN");
+        btnFlip.setRotationY(0);
     }
 }

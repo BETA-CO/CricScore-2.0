@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.example.cricscore.dataTypes.Match;
 
-@Database(entities = {Match.class}, version = 2)
+@Database(entities = {Match.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MatchDao matchDao();
 
@@ -18,11 +18,13 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "cricscore_database")
-                            .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries()
-                            .build();
+                    INSTANCE = Room.databaseBuilder(
+                            context.getApplicationContext(),
+                            AppDatabase.class,
+                            "cricscore_db"
+                    )
+                    .fallbackToDestructiveMigration() // Automatically wipe and recreate the DB on schema change
+                    .build();
                 }
             }
         }

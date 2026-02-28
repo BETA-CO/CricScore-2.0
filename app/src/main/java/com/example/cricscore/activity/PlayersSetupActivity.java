@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -69,12 +70,23 @@ public class PlayersSetupActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.btnSubmit).setOnClickListener(v -> {
+            boolean allFilled = true;
+            for (int i = 0; i < editTexts.size(); i++) {
+                EditText et = editTexts.get(i);
+                if (et.getText().toString().trim().isEmpty()) {
+                    et.setError("Player name required");
+                    allFilled = false;
+                }
+            }
+
+            if (!allFilled) {
+                Toast.makeText(this, "Please fill all player names before continuing", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             StringBuilder names = new StringBuilder();
             for (int i = 0; i < editTexts.size(); i++) {
                 String name = editTexts.get(i).getText().toString().trim();
-                if (name.isEmpty()) {
-                    name = currentTeam + " Player " + (i + 1);
-                }
                 names.append(name);
                 if (i < editTexts.size() - 1) names.append(",");
             }
@@ -105,6 +117,7 @@ public class PlayersSetupActivity extends AppCompatActivity {
         findViewById(R.id.btnDummyPlayers).setOnClickListener(v -> {
             for (int i = 0; i < editTexts.size(); i++) {
                 editTexts.get(i).setText(currentTeam + " Star " + (i + 1));
+                editTexts.get(i).setError(null);
             }
         });
     }

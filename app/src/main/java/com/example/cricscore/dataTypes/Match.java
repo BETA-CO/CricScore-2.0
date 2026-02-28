@@ -22,6 +22,13 @@ public class Match {
     public String statsAJson;
     public String statsBJson;
 
+    // Super Over fields
+    public boolean hasSuperOver = false;
+    public int superScoreA;
+    public int superWicketsA;
+    public int superScoreB;
+    public int superWicketsB;
+
     public Match(
             String teamA, String teamB,
             int scoreA,

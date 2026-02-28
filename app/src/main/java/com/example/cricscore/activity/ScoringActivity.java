@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cricscore.MainActivity;
 import com.example.cricscore.R;
 import com.example.cricscore.dataBase.AppDatabase;
 import com.example.cricscore.dataTypes.Match;
@@ -35,7 +36,11 @@ public class ScoringActivity extends AppCompatActivity {
     private int scoreA = 0, wicketsA = 0, ballsA = 0;
     private int scoreB = 0, wicketsB = 0, ballsB = 0;
     private boolean isInnings1 = true;
+    
+    // Super Over tracking
     private boolean isSuperOver = false;
+    private int mainScoreA, mainWicketsA, mainBallsA;
+    private int mainScoreB, mainWicketsB, mainBallsB;
 
     private String currentStriker = "Select";
     private String currentNonStriker = "Select";
@@ -82,7 +87,7 @@ public class ScoringActivity extends AppCompatActivity {
         final Map<String, Integer> ballsPlayed;
         final Map<String, String> dismissals;
 
-        ScoreState(int sA, int wA, int bA, int sB, int wB, int bB, boolean inn1, 
+        ScoreState(int sA, int wA, int bA, int sB, int wB, int bB, boolean inn1,
                    String striker, String nonStriker, String bowler,
                    Map<String, Integer> bRuns, Map<String, Integer> boRuns, Map<String, Integer> boWickets,
                    List<String> overHistory, Set<String> outPlayers, Map<String, Integer> ballsPlayed,
@@ -135,6 +140,12 @@ public class ScoringActivity extends AppCompatActivity {
         tvNonStriker.setOnClickListener(v -> showPlayerPicker(1));
         tvBowler.setOnClickListener(v -> showPlayerPicker(2));
 
+        findViewById(R.id.btnSwap).setOnClickListener(v -> {
+            saveState();
+            rotateStrike();
+            updateUI();
+        });
+
         updateUI();
         setupButtons();
 
@@ -160,6 +171,22 @@ public class ScoringActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnUndo).setOnClickListener(v -> undo());
+
+        findViewById(R.id.btnStopMatch).setOnClickListener(v -> showStopMatchDialog());
+    }
+
+    private void showStopMatchDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Cancel Match?")
+                .setMessage("Are you sure you want to stop this match? All current progress will be lost and no data will be saved.")
+                .setPositiveButton("Stop Match", (dialog, which) -> {
+                    Intent intent = new Intent(ScoringActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Continue Scoring", null)
+                .show();
     }
 
     private String getPlayerKey(String playerName, boolean isTeamA) {
@@ -281,9 +308,79 @@ public class ScoringActivity extends AppCompatActivity {
         findViewById(R.id.btn3).setOnClickListener(v -> addRuns(3));
         findViewById(R.id.btn4).setOnClickListener(v -> addRuns(4));
         findViewById(R.id.btn6).setOnClickListener(v -> addRuns(6));
+        findViewById(R.id.btn1D).setOnClickListener(v -> addDotWithRuns(1));
+        findViewById(R.id.btn2D).setOnClickListener(v -> addDotWithRuns(2));
         findViewById(R.id.btnWicket).setOnClickListener(v -> handleWicketClick());
         findViewById(R.id.btnWide).setOnClickListener(v -> addExtra("WD", 1));
-        findViewById(R.id.btnNoBall).setOnClickListener(v -> addExtra("NB", 1));
+        findViewById(R.id.btnNoBall).setOnClickListener(v -> showNoBallDialog());
+    }
+
+    private void addDotWithRuns(int runs) {
+        if (!checkPlayersSelected()) return;
+        saveState();
+        
+        String bKey = getPlayerKey(currentStriker, isInnings1);
+        String boKey = getPlayerKey(currentBowler, !isInnings1);
+
+        batsmanRuns.put(bKey, batsmanRuns.getOrDefault(bKey, 0) + runs);
+        playerBallsPlayed.put(bKey, playerBallsPlayed.getOrDefault(bKey, 0) + 1);
+        bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + runs);
+        
+        currentOverHistory.add(runs + "D");
+
+        if (isInnings1) {
+            scoreA += runs;
+            ballsA++;
+            checkOverEnd(ballsA);
+            checkInningsEnd();
+        } else {
+            scoreB += runs;
+            ballsB++;
+            checkOverEnd(ballsB);
+            checkMatchEnd();
+        }
+        updateUI();
+    }
+
+    private void showNoBallDialog() {
+        if (!checkPlayersSelected()) return;
+        String[] options = {"NB (Only)", "NB + 1 Run", "NB + 2 Runs", "NB + 3 Runs", "NB + 4 Runs", "NB + 6 Runs"};
+        int[] runValues = {0, 1, 2, 3, 4, 6};
+        
+        new AlertDialog.Builder(this)
+                .setTitle("No Ball Extras")
+                .setItems(options, (dialog, which) -> {
+                    handleNoBall(runValues[which]);
+                })
+                .show();
+    }
+
+    private void handleNoBall(int extraRuns) {
+        saveState();
+        int totalRunsForBall = 1 + extraRuns; // 1 for NB + the runs from bat/bye
+        
+        String bKey = getPlayerKey(currentStriker, isInnings1);
+        String boKey = getPlayerKey(currentBowler, !isInnings1);
+
+        // Update batsman stats (runs from bat on NB count towards batsman total)
+        if (extraRuns > 0) {
+            batsmanRuns.put(bKey, batsmanRuns.getOrDefault(bKey, 0) + extraRuns);
+            if (extraRuns % 2 != 0) rotateStrike();
+        }
+        
+        // Bowler conceded runs (all runs on NB count against bowler)
+        bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + totalRunsForBall);
+        
+        currentOverHistory.add("NB" + (extraRuns > 0 ? "+" + extraRuns : ""));
+
+        if (isInnings1) {
+            scoreA += totalRunsForBall;
+            checkInningsEnd();
+        } else {
+            scoreB += totalRunsForBall;
+            checkMatchEnd();
+        }
+        updateUI();
     }
 
     private void handleWicketClick() {
@@ -451,12 +548,17 @@ public class ScoringActivity extends AppCompatActivity {
     }
 
     private void startSuperOver() {
+        // PRESERVE MAIN MATCH DATA
+        mainScoreA = scoreA; mainWicketsA = wicketsA; mainBallsA = ballsA;
+        mainScoreB = scoreB; mainWicketsB = wicketsB; mainBallsB = ballsB;
+        
         isSuperOver = true;
         isInnings1 = true;
         totalOvers = 1;
-        maxWicketsA = 2; // Super over standard
+        maxWicketsA = 2; 
         maxWicketsB = 2;
         
+        // RESET FOR SUPER OVER
         scoreA = 0; wicketsA = 0; ballsA = 0;
         scoreB = 0; wicketsB = 0; ballsB = 0;
         
@@ -465,12 +567,10 @@ public class ScoringActivity extends AppCompatActivity {
         currentBowler = "Select";
         currentOverHistory.clear();
         outPlayers.clear();
-        batsmanRuns.clear();
-        playerBallsPlayed.clear();
-        playerDismissal.clear();
-        bowlerRunsMap.clear();
-        bowlerWicketsMap.clear();
         history.clear();
+        
+        // Note: We DON'T clear batsmanRuns or playerBallsPlayed maps
+        // so that Super Over stats are ADDED to the main match stats.
         
         updateUI();
         Toast.makeText(this, "SUPER OVER STARTED!", Toast.LENGTH_SHORT).show();
@@ -509,6 +609,8 @@ public class ScoringActivity extends AppCompatActivity {
         findViewById(R.id.btn3).setEnabled(enabled);
         findViewById(R.id.btn4).setEnabled(enabled);
         findViewById(R.id.btn6).setEnabled(enabled);
+        findViewById(R.id.btn1D).setEnabled(enabled);
+        findViewById(R.id.btn2D).setEnabled(enabled);
         findViewById(R.id.btnWicket).setEnabled(enabled);
         findViewById(R.id.btnWide).setEnabled(enabled);
         findViewById(R.id.btnNoBall).setEnabled(enabled);
@@ -537,8 +639,14 @@ public class ScoringActivity extends AppCompatActivity {
 
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         
-        double finalOversA = Double.parseDouble(getOvers(ballsA));
-        double finalOversB = Double.parseDouble(getOvers(ballsB));
+        // Final match details
+        int finalScoreA = isSuperOver ? mainScoreA : scoreA;
+        int finalWicketsA = isSuperOver ? mainWicketsA : wicketsA;
+        double finalOversA = Double.parseDouble(getOvers(isSuperOver ? mainBallsA : ballsA));
+
+        int finalScoreB = isSuperOver ? mainScoreB : scoreB;
+        int finalWicketsB = isSuperOver ? mainWicketsB : wicketsB;
+        double finalOversB = Double.parseDouble(getOvers(isSuperOver ? mainBallsB : ballsB));
 
         ArrayList<PlayerStats> statsA = getDetailedStats(playersA, true);
         ArrayList<PlayerStats> statsB = getDetailedStats(playersB, false);
@@ -547,9 +655,17 @@ public class ScoringActivity extends AppCompatActivity {
         String statsAJson = gson.toJson(statsA);
         String statsBJson = gson.toJson(statsB);
 
-        Match match = new Match(teamA, teamB, scoreA, wicketsA, finalOversA,
-                                scoreB, wicketsB, finalOversB, winner, date,
+        Match match = new Match(teamA, teamB, finalScoreA, finalWicketsA, finalOversA,
+                                finalScoreB, finalWicketsB, finalOversB, winner, date,
                                 statsAJson, statsBJson);
+        
+        if (isSuperOver) {
+            match.hasSuperOver = true;
+            match.superScoreA = scoreA;
+            match.superWicketsA = wicketsA;
+            match.superScoreB = scoreB;
+            match.superWicketsB = wicketsB;
+        }
 
         String finalWinner = winner;
         new Thread(() -> {
@@ -559,14 +675,22 @@ public class ScoringActivity extends AppCompatActivity {
                 intent.putExtra("winner", finalWinner);
                 intent.putExtra("teamA", teamA);
                 intent.putExtra("teamB", teamB);
-                intent.putExtra("scoreA", scoreA);
-                intent.putExtra("wicketsA", wicketsA);
+                intent.putExtra("scoreA", finalScoreA);
+                intent.putExtra("wicketsA", finalWicketsA);
                 intent.putExtra("oversA", finalOversA);
-                intent.putExtra("scoreB", scoreB);
-                intent.putExtra("wicketsB", wicketsB);
+                intent.putExtra("scoreB", finalScoreB);
+                intent.putExtra("wicketsB", finalWicketsB);
                 intent.putExtra("oversB", finalOversB);
                 intent.putExtra("statsA", statsA);
                 intent.putExtra("statsB", statsB);
+                // Also pass Super Over data to ResultActivity
+                if (isSuperOver) {
+                    intent.putExtra("hasSuperOver", true);
+                    intent.putExtra("superScoreA", scoreA);
+                    intent.putExtra("superWicketsA", wicketsA);
+                    intent.putExtra("superScoreB", scoreB);
+                    intent.putExtra("superWicketsB", wicketsB);
+                }
                 startActivity(intent);
                 finish();
             });

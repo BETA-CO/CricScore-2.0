@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cricscore.MainActivity;
 import com.example.cricscore.R;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -25,12 +26,21 @@ public class ResultActivity extends AppCompatActivity {
         String winner = getIntent().getStringExtra("winner");
         String teamA = getIntent().getStringExtra("teamA");
         String teamB = getIntent().getStringExtra("teamB");
+        
+        // Main Match Stats
         int scoreA = getIntent().getIntExtra("scoreA", 0);
         int wicketsA = getIntent().getIntExtra("wicketsA", 0);
         double oversA = getIntent().getDoubleExtra("oversA", 0.0);
         int scoreB = getIntent().getIntExtra("scoreB", 0);
         int wicketsB = getIntent().getIntExtra("wicketsB", 0);
         double oversB = getIntent().getDoubleExtra("oversB", 0.0);
+
+        // Super Over Stats (if any)
+        boolean hasSuperOver = getIntent().getBooleanExtra("hasSuperOver", false);
+        int superScoreA = getIntent().getIntExtra("superScoreA", 0);
+        int superWicketsA = getIntent().getIntExtra("superWicketsA", 0);
+        int superScoreB = getIntent().getIntExtra("superScoreB", 0);
+        int superWicketsB = getIntent().getIntExtra("superWicketsB", 0);
 
         ArrayList<ScoringActivity.PlayerStats> statsA = (ArrayList<ScoringActivity.PlayerStats>) getIntent().getSerializableExtra("statsA");
         ArrayList<ScoringActivity.PlayerStats> statsB = (ArrayList<ScoringActivity.PlayerStats>) getIntent().getSerializableExtra("statsB");
@@ -44,12 +54,25 @@ public class ResultActivity extends AppCompatActivity {
         LinearLayout llTeam1Stats = findViewById(R.id.llTeam1Stats);
         LinearLayout llTeam2Stats = findViewById(R.id.llTeam2Stats);
 
+        // Handle Winner Display
         if ("Draw".equals(winner)) {
             tvWinner.setText("It's a Draw!");
         } else {
             tvWinner.setText(winner + " Won!");
         }
 
+        // Handle Super Over Card
+        MaterialCardView cvSuperOver = findViewById(R.id.cvSuperOver);
+        TextView tvSuperOverScores = findViewById(R.id.tvSuperOverScores);
+        if (hasSuperOver) {
+            cvSuperOver.setVisibility(View.VISIBLE);
+            String soText = teamA + ": " + superScoreA + "/" + superWicketsA + " | " + teamB + ": " + superScoreB + "/" + superWicketsB;
+            tvSuperOverScores.setText(soText);
+        } else {
+            cvSuperOver.setVisibility(View.GONE);
+        }
+
+        // Populate Main Match Scorecard
         tvTeam1Header.setText(teamA + " Scorecard");
         tvTeam1Result.setText(scoreA + "/" + wicketsA + " (" + oversA + ")");
         tvTeam2Header.setText(teamB + " Scorecard");
