@@ -28,6 +28,10 @@ public class Match {
     public int superWicketsA;
     public int superScoreB;
     public int superWicketsB;
+    
+    // Super Over player stats
+    public String superStatsAJson;
+    public String superStatsBJson;
 
     public Match(
             String teamA, String teamB,
@@ -37,10 +41,8 @@ public class Match {
             int scoreB,
             int wicketsB,
             double oversB,
-            String winner,
-            String date,
-            String statsAJson,
-            String statsBJson
+            String winner, String date,
+            String statsAJson, String statsBJson
     ) {
         this.teamA = teamA;
         this.teamB = teamB;

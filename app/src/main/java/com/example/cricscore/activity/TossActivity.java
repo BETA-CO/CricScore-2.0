@@ -16,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.cricscore.R;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class TossActivity extends AppCompatActivity {
 
@@ -27,6 +30,10 @@ public class TossActivity extends AppCompatActivity {
     private String tossWinner;
     private String battingTeam;
     private boolean isFlipping = false;
+    private final SecureRandom secureRandom = new SecureRandom();
+
+    private String headsTeam = null;
+    private String tailsTeam = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +53,11 @@ public class TossActivity extends AppCompatActivity {
 
         btnFlip.setOnClickListener(v -> {
             if (isFlipping) return;
-            startCoinFlip();
+            if (headsTeam == null) {
+                showHeadsSelectionDialog();
+            } else {
+                startCoinFlip();
+            }
         });
 
         btnStartScoring.setOnClickListener(v -> {
@@ -77,15 +88,33 @@ public class TossActivity extends AppCompatActivity {
         });
     }
 
+    private void showHeadsSelectionDialog() {
+        String[] teams = {teamA, teamB};
+        new AlertDialog.Builder(this)
+                .setTitle("Select team for HEADS")
+                .setItems(teams, (dialog, which) -> {
+                    headsTeam = teams[which];
+                    tailsTeam = (which == 0) ? teamB : teamA;
+                    Toast.makeText(this, headsTeam + " is HEADS, " + tailsTeam + " is TAILS", Toast.LENGTH_SHORT).show();
+                    startCoinFlip();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
     private void startCoinFlip() {
         isFlipping = true;
         btnFlip.setEnabled(false);
         findViewById(R.id.cvTossResult).setVisibility(View.GONE);
         btnStartScoring.setVisibility(View.GONE);
 
+        // Random selection of result
+        final boolean isResultHeads = secureRandom.nextBoolean();
+        tossWinner = isResultHeads ? headsTeam : tailsTeam;
+
         Handler handler = new Handler(Looper.getMainLooper());
-        final int flipCount = 25; 
-        final long flipDelay = 120; 
+        final int flipCount = 35; 
+        final long flipDelay = 110; 
 
         for (int i = 0; i < flipCount; i++) {
             final int index = i;
@@ -99,27 +128,21 @@ public class TossActivity extends AppCompatActivity {
             }, i * flipDelay);
         }
 
-        // Final land animation
-        handler.postDelayed(this::finalizeToss, flipCount * flipDelay);
+        handler.postDelayed(() -> finalizeToss(isResultHeads), flipCount * flipDelay);
     }
 
-    private void finalizeToss() {
-        Random random = new Random();
-        boolean heads = random.nextBoolean();
-        tossWinner = heads ? teamA : teamB;
-        
-        // Final "landing" flip to bring it to a flat stop
+    private void finalizeToss(boolean isResultHeads) {
         btnFlip.animate()
                 .rotationYBy(180)
-                .setDuration(500)
+                .setDuration(600)
                 .setInterpolator(new DecelerateInterpolator())
                 .withEndAction(() -> {
-                    btnFlip.setText(heads ? "HEADS" : "TAILS");
-                    btnFlip.setRotationY(0); // Ensure perfectly flat (0 degrees)
+                    btnFlip.setText(isResultHeads ? "HEADS" : "TAILS");
+                    btnFlip.setRotationY(0); 
                     btnFlip.setEnabled(true);
                     isFlipping = false;
                     
-                    new Handler(Looper.getMainLooper()).postDelayed(this::showTossDialog, 600);
+                    new Handler(Looper.getMainLooper()).postDelayed(this::showTossDialog, 700);
                 })
                 .start();
     }
@@ -148,8 +171,10 @@ public class TossActivity extends AppCompatActivity {
         findViewById(R.id.cvTossResult).setVisibility(View.VISIBLE);
         btnStartScoring.setVisibility(View.VISIBLE);
         
-        // Reset coin to original flat state with "FLIP COIN" text
         btnFlip.setText("FLIP COIN");
         btnFlip.setRotationY(0);
+        // Reset for next time if needed, though activity finishes
+        headsTeam = null;
+        tailsTeam = null;
     }
 }

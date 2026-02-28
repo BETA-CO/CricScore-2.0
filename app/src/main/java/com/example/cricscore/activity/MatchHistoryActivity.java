@@ -68,6 +68,19 @@ public class MatchHistoryActivity extends AppCompatActivity implements MatchAdap
         intent.putExtra("oversB", match.oversB);
         intent.putExtra("statsA", statsA);
         intent.putExtra("statsB", statsB);
+
+        if (match.hasSuperOver) {
+            ArrayList<ScoringActivity.PlayerStats> superStatsA = gson.fromJson(match.superStatsAJson, listType);
+            ArrayList<ScoringActivity.PlayerStats> superStatsB = gson.fromJson(match.superStatsBJson, listType);
+            intent.putExtra("hasSuperOver", true);
+            intent.putExtra("superScoreA", match.superScoreA);
+            intent.putExtra("superWicketsA", match.superWicketsA);
+            intent.putExtra("superScoreB", match.superScoreB);
+            intent.putExtra("superWicketsB", match.superWicketsB);
+            intent.putExtra("superStatsA", superStatsA);
+            intent.putExtra("superStatsB", superStatsB);
+        }
+
         startActivity(intent);
     }
 

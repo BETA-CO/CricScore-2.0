@@ -41,6 +41,7 @@ public class ScoringActivity extends AppCompatActivity {
     private boolean isSuperOver = false;
     private int mainScoreA, mainWicketsA, mainBallsA;
     private int mainScoreB, mainWicketsB, mainBallsB;
+    private ArrayList<PlayerStats> mainStatsA, mainStatsB;
 
     private String currentStriker = "Select";
     private String currentNonStriker = "Select";
@@ -48,11 +49,22 @@ public class ScoringActivity extends AppCompatActivity {
 
     private Map<String, Integer> batsmanRuns = new HashMap<>();
     private Map<String, Integer> playerBallsPlayed = new HashMap<>();
+    private Map<String, Integer> batsmanFours = new HashMap<>();
+    private Map<String, Integer> batsmanSixes = new HashMap<>();
     private Map<String, String> playerDismissal = new HashMap<>(); 
 
     private Map<String, Integer> bowlerRunsMap = new HashMap<>();
     private Map<String, Integer> bowlerWicketsMap = new HashMap<>();
+    private Map<String, Integer> bowlerBallsMap = new HashMap<>();
+    private Map<String, Integer> bowlerMaidensMap = new HashMap<>();
+    
+    private Map<String, Integer> fielderCatches = new HashMap<>();
+    private Map<String, Integer> fielderStumpings = new HashMap<>();
+    private Map<String, Integer> fielderRunOuts = new HashMap<>();
+
     private List<String> currentOverHistory = new ArrayList<>();
+    private int currentOverRuns = 0;
+    private boolean currentOverHasExtras = false; 
     
     private Set<String> outPlayers = new HashSet<>();
 
@@ -63,15 +75,21 @@ public class ScoringActivity extends AppCompatActivity {
         public String name;
         public int runs;
         public int balls;
+        public int fours;
+        public int sixes;
         public String dismissal; 
         public boolean isOut;
+        public int bowlingRuns;
+        public int bowlingBalls;
+        public int wickets;
+        public int maidens;
+        public int catches;
+        public int stumpings;
+        public int runOuts;
 
-        public PlayerStats(String name, int runs, int balls, String dismissal, boolean isOut) {
+        public PlayerStats(String name) {
             this.name = name;
-            this.runs = runs;
-            this.balls = balls;
-            this.dismissal = dismissal;
-            this.isOut = isOut;
+            this.dismissal = "DNB";
         }
     }
 
@@ -79,19 +97,20 @@ public class ScoringActivity extends AppCompatActivity {
         final int sA, wA, bA, sB, wB, bB;
         final boolean inn1;
         final String striker, nonStriker, bowler;
-        final Map<String, Integer> bRuns;
-        final Map<String, Integer> boRuns;
-        final Map<String, Integer> boWickets;
+        final Map<String, Integer> bRuns, ballsPlayed, bFours, bSixes;
+        final Map<String, Integer> boRuns, boWickets, boBalls, boMaidens;
+        final Map<String, Integer> fCatches, fStumpings, fRunOuts;
         final List<String> overHistory;
         final Set<String> outPlayers;
-        final Map<String, Integer> ballsPlayed;
         final Map<String, String> dismissals;
+        final int cOverRuns;
 
-        ScoreState(int sA, int wA, int bA, int sB, int wB, int bB, boolean inn1,
+        ScoreState(int sA, int wA, int bA, int sB, int wB, int bB, boolean inn1, 
                    String striker, String nonStriker, String bowler,
-                   Map<String, Integer> bRuns, Map<String, Integer> boRuns, Map<String, Integer> boWickets,
-                   List<String> overHistory, Set<String> outPlayers, Map<String, Integer> ballsPlayed,
-                   Map<String, String> dismissals) {
+                   Map<String, Integer> bRuns, Map<String, Integer> ballsPlayed, Map<String, Integer> bFours, Map<String, Integer> bSixes,
+                   Map<String, Integer> boRuns, Map<String, Integer> boWickets, Map<String, Integer> boBalls, Map<String, Integer> boMaidens,
+                   Map<String, Integer> fCatches, Map<String, Integer> fStumpings, Map<String, Integer> fRunOuts,
+                   List<String> overHistory, Set<String> outPlayers, Map<String, String> dismissals, int cOverRuns) {
             this.sA = sA; this.wA = wA; this.bA = bA;
             this.sB = sB; this.wB = wB; this.bB = bB;
             this.inn1 = inn1;
@@ -99,12 +118,20 @@ public class ScoringActivity extends AppCompatActivity {
             this.nonStriker = nonStriker;
             this.bowler = bowler;
             this.bRuns = new HashMap<>(bRuns);
+            this.ballsPlayed = new HashMap<>(ballsPlayed);
+            this.bFours = new HashMap<>(bFours);
+            this.bSixes = new HashMap<>(bSixes);
             this.boRuns = new HashMap<>(boRuns);
             this.boWickets = new HashMap<>(boWickets);
+            this.boBalls = new HashMap<>(boBalls);
+            this.boMaidens = new HashMap<>(boMaidens);
+            this.fCatches = new HashMap<>(fCatches);
+            this.fStumpings = new HashMap<>(fStumpings);
+            this.fRunOuts = new HashMap<>(fRunOuts);
             this.overHistory = new ArrayList<>(overHistory);
             this.outPlayers = new HashSet<>(outPlayers);
-            this.ballsPlayed = new HashMap<>(ballsPlayed);
             this.dismissals = new HashMap<>(dismissals);
+            this.cOverRuns = cOverRuns;
         }
     }
     private final List<ScoreState> history = new ArrayList<>();
@@ -171,7 +198,6 @@ public class ScoringActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnUndo).setOnClickListener(v -> undo());
-
         findViewById(R.id.btnStopMatch).setOnClickListener(v -> showStopMatchDialog());
     }
 
@@ -199,6 +225,8 @@ public class ScoringActivity extends AppCompatActivity {
         currentNonStriker = "Select";
         currentBowler = "Select";
         currentOverHistory.clear();
+        currentOverRuns = 0;
+        currentOverHasExtras = false;
         outPlayers.clear();
         updateUI();
         Toast.makeText(this, "Target: " + (scoreA + 1), Toast.LENGTH_LONG).show();
@@ -206,8 +234,10 @@ public class ScoringActivity extends AppCompatActivity {
 
     private void saveState() {
         history.add(new ScoreState(scoreA, wicketsA, ballsA, scoreB, wicketsB, ballsB, isInnings1, 
-                currentStriker, currentNonStriker, currentBowler, batsmanRuns, bowlerRunsMap, bowlerWicketsMap, 
-                currentOverHistory, outPlayers, playerBallsPlayed, playerDismissal));
+                currentStriker, currentNonStriker, currentBowler, batsmanRuns, playerBallsPlayed, batsmanFours, batsmanSixes,
+                bowlerRunsMap, bowlerWicketsMap, bowlerBallsMap, bowlerMaidensMap, 
+                fielderCatches, fielderStumpings, fielderRunOuts,
+                currentOverHistory, outPlayers, playerDismissal, currentOverRuns));
         if (history.size() > 50) history.remove(0);
     }
 
@@ -221,12 +251,20 @@ public class ScoringActivity extends AppCompatActivity {
             currentNonStriker = last.nonStriker;
             currentBowler = last.bowler;
             batsmanRuns = new HashMap<>(last.bRuns);
+            playerBallsPlayed = new HashMap<>(last.ballsPlayed);
+            batsmanFours = new HashMap<>(last.bFours);
+            batsmanSixes = new HashMap<>(last.bSixes);
             bowlerRunsMap = new HashMap<>(last.boRuns);
             bowlerWicketsMap = new HashMap<>(last.boWickets);
+            bowlerBallsMap = new HashMap<>(last.boBalls);
+            bowlerMaidensMap = new HashMap<>(last.boMaidens);
+            fielderCatches = new HashMap<>(last.fCatches);
+            fielderStumpings = new HashMap<>(last.fStumpings);
+            fielderRunOuts = new HashMap<>(last.fRunOuts);
             currentOverHistory = new ArrayList<>(last.overHistory);
             outPlayers = new HashSet<>(last.outPlayers);
-            playerBallsPlayed = new HashMap<>(last.ballsPlayed);
             playerDismissal = new HashMap<>(last.dismissals);
+            currentOverRuns = last.cOverRuns;
             updateUI();
         } else {
             Toast.makeText(this, "Nothing to undo", Toast.LENGTH_SHORT).show();
@@ -325,6 +363,8 @@ public class ScoringActivity extends AppCompatActivity {
         batsmanRuns.put(bKey, batsmanRuns.getOrDefault(bKey, 0) + runs);
         playerBallsPlayed.put(bKey, playerBallsPlayed.getOrDefault(bKey, 0) + 1);
         bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + runs);
+        bowlerBallsMap.put(boKey, bowlerBallsMap.getOrDefault(boKey, 0) + 1);
+        currentOverRuns += runs;
         
         currentOverHistory.add(runs + "D");
 
@@ -357,19 +397,21 @@ public class ScoringActivity extends AppCompatActivity {
 
     private void handleNoBall(int extraRuns) {
         saveState();
-        int totalRunsForBall = 1 + extraRuns; // 1 for NB + the runs from bat/bye
+        int totalRunsForBall = 1 + extraRuns; 
         
         String bKey = getPlayerKey(currentStriker, isInnings1);
         String boKey = getPlayerKey(currentBowler, !isInnings1);
 
-        // Update batsman stats (runs from bat on NB count towards batsman total)
         if (extraRuns > 0) {
             batsmanRuns.put(bKey, batsmanRuns.getOrDefault(bKey, 0) + extraRuns);
+            if (extraRuns == 4) batsmanFours.put(bKey, batsmanFours.getOrDefault(bKey, 0) + 1);
+            if (extraRuns == 6) batsmanSixes.put(bKey, batsmanSixes.getOrDefault(bKey, 0) + 1);
             if (extraRuns % 2 != 0) rotateStrike();
         }
         
-        // Bowler conceded runs (all runs on NB count against bowler)
         bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + totalRunsForBall);
+        currentOverRuns += totalRunsForBall;
+        currentOverHasExtras = true;
         
         currentOverHistory.add("NB" + (extraRuns > 0 ? "+" + extraRuns : ""));
 
@@ -402,15 +444,32 @@ public class ScoringActivity extends AppCompatActivity {
                 .setTitle("How was " + playerName + " out?")
                 .setItems(types, (dialog, which) -> {
                     String howOut = types[which];
-                    if (!howOut.equals("Run Out")) {
-                        howOut += " b " + currentBowler;
-                    }
-                    processWicket(playerName, isStrikerOut, howOut);
+                    showFielderPicker(playerName, isStrikerOut, howOut);
                 })
                 .show();
     }
 
-    private void processWicket(String playerOutName, boolean isStrikerOut, String dismissalDesc) {
+    private void showFielderPicker(String playerOutName, boolean isStrikerOut, String type) {
+        if (!type.equals("Caught") && !type.equals("Stumped") && !type.equals("Run Out")) {
+            processWicket(playerOutName, isStrikerOut, type + " b " + currentBowler, null);
+            return;
+        }
+
+        List<String> fieldingTeam = isInnings1 ? playersB : playersA;
+        String[] fielders = fieldingTeam.toArray(new String[0]);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Select Fielder/Keeper")
+                .setItems(fielders, (dialog, which) -> {
+                    String fielderName = fielders[which];
+                    String desc = type + " (" + fielderName + ") b " + currentBowler;
+                    if (type.equals("Run Out")) desc = "Run Out (" + fielderName + ")";
+                    processWicket(playerOutName, isStrikerOut, desc, fielderName);
+                })
+                .show();
+    }
+
+    private void processWicket(String playerOutName, boolean isStrikerOut, String dismissalDesc, String fielderName) {
         saveState();
         String pKey = getPlayerKey(playerOutName, isInnings1);
         String boKey = getPlayerKey(currentBowler, !isInnings1);
@@ -419,9 +478,17 @@ public class ScoringActivity extends AppCompatActivity {
             bowlerWicketsMap.put(boKey, bowlerWicketsMap.getOrDefault(boKey, 0) + 1);
         }
         
+        if (fielderName != null) {
+            String fKey = getPlayerKey(fielderName, !isInnings1);
+            if (dismissalDesc.contains("Caught")) fielderCatches.put(fKey, fielderCatches.getOrDefault(fKey, 0) + 1);
+            else if (dismissalDesc.contains("Stumped")) fielderStumpings.put(fKey, fielderStumpings.getOrDefault(fKey, 0) + 1);
+            else if (dismissalDesc.contains("Run Out")) fielderRunOuts.put(fKey, fielderRunOuts.getOrDefault(fKey, 0) + 1);
+        }
+        
         outPlayers.add(pKey);
         playerDismissal.put(pKey, dismissalDesc);
         playerBallsPlayed.put(pKey, playerBallsPlayed.getOrDefault(pKey, 0) + 1);
+        bowlerBallsMap.put(boKey, bowlerBallsMap.getOrDefault(boKey, 0) + 1);
         
         currentOverHistory.add("W");
 
@@ -440,7 +507,6 @@ public class ScoringActivity extends AppCompatActivity {
             checkOverEnd(ballsB);
             checkMatchEnd();
         }
-        
         updateUI();
         
         int currentWickets = isInnings1 ? wicketsA : wicketsB;
@@ -467,7 +533,12 @@ public class ScoringActivity extends AppCompatActivity {
 
         batsmanRuns.put(bKey, batsmanRuns.getOrDefault(bKey, 0) + runs);
         playerBallsPlayed.put(bKey, playerBallsPlayed.getOrDefault(bKey, 0) + 1);
+        if (runs == 4) batsmanFours.put(bKey, batsmanFours.getOrDefault(bKey, 0) + 1);
+        if (runs == 6) batsmanSixes.put(bKey, batsmanSixes.getOrDefault(bKey, 0) + 1);
+        
         bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + runs);
+        bowlerBallsMap.put(boKey, bowlerBallsMap.getOrDefault(boKey, 0) + 1);
+        currentOverRuns += runs;
         
         currentOverHistory.add(String.valueOf(runs));
 
@@ -493,6 +564,8 @@ public class ScoringActivity extends AppCompatActivity {
         
         String boKey = getPlayerKey(currentBowler, !isInnings1);
         bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + runs);
+        currentOverRuns += runs;
+        currentOverHasExtras = true;
         currentOverHistory.add(type);
 
         if (isInnings1) {
@@ -512,6 +585,13 @@ public class ScoringActivity extends AppCompatActivity {
 
     private void checkOverEnd(int totalBalls) {
         if (totalBalls > 0 && totalBalls % 6 == 0) {
+            String boKey = getPlayerKey(currentBowler, !isInnings1);
+            if (currentOverRuns == 0 && !currentOverHasExtras) {
+                bowlerMaidensMap.put(boKey, bowlerMaidensMap.getOrDefault(boKey, 0) + 1);
+            }
+            currentOverRuns = 0;
+            currentOverHasExtras = false;
+            
             rotateStrike();
             currentBowler = "Select";
             currentOverHistory.clear(); 
@@ -548,7 +628,10 @@ public class ScoringActivity extends AppCompatActivity {
     }
 
     private void startSuperOver() {
-        // PRESERVE MAIN MATCH DATA
+        // CAPTURE MAIN MATCH STATS BEFORE RESET
+        mainStatsA = getDetailedStats(playersA, true);
+        mainStatsB = getDetailedStats(playersB, false);
+        
         mainScoreA = scoreA; mainWicketsA = wicketsA; mainBallsA = ballsA;
         mainScoreB = scoreB; mainWicketsB = wicketsB; mainBallsB = ballsB;
         
@@ -558,7 +641,7 @@ public class ScoringActivity extends AppCompatActivity {
         maxWicketsA = 2; 
         maxWicketsB = 2;
         
-        // RESET FOR SUPER OVER
+        // RESET GAME STATE FOR SUPER OVER
         scoreA = 0; wicketsA = 0; ballsA = 0;
         scoreB = 0; wicketsB = 0; ballsB = 0;
         
@@ -566,11 +649,24 @@ public class ScoringActivity extends AppCompatActivity {
         currentNonStriker = "Select";
         currentBowler = "Select";
         currentOverHistory.clear();
+        currentOverRuns = 0;
+        currentOverHasExtras = false;
         outPlayers.clear();
         history.clear();
         
-        // Note: We DON'T clear batsmanRuns or playerBallsPlayed maps
-        // so that Super Over stats are ADDED to the main match stats.
+        // CLEAR STAT MAPS FOR SUPER OVER
+        batsmanRuns.clear();
+        playerBallsPlayed.clear();
+        batsmanFours.clear();
+        batsmanSixes.clear();
+        playerDismissal.clear();
+        bowlerRunsMap.clear();
+        bowlerWicketsMap.clear();
+        bowlerBallsMap.clear();
+        bowlerMaidensMap.clear();
+        fielderCatches.clear();
+        fielderStumpings.clear();
+        fielderRunOuts.clear();
         
         updateUI();
         Toast.makeText(this, "SUPER OVER STARTED!", Toast.LENGTH_SHORT).show();
@@ -639,7 +735,6 @@ public class ScoringActivity extends AppCompatActivity {
 
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         
-        // Final match details
         int finalScoreA = isSuperOver ? mainScoreA : scoreA;
         int finalWicketsA = isSuperOver ? mainWicketsA : wicketsA;
         double finalOversA = Double.parseDouble(getOvers(isSuperOver ? mainBallsA : ballsA));
@@ -648,8 +743,18 @@ public class ScoringActivity extends AppCompatActivity {
         int finalWicketsB = isSuperOver ? mainWicketsB : wicketsB;
         double finalOversB = Double.parseDouble(getOvers(isSuperOver ? mainBallsB : ballsB));
 
-        ArrayList<PlayerStats> statsA = getDetailedStats(playersA, true);
-        ArrayList<PlayerStats> statsB = getDetailedStats(playersB, false);
+        ArrayList<PlayerStats> statsA, statsB;
+        ArrayList<PlayerStats> superStatsA = null, superStatsB = null;
+
+        if (isSuperOver) {
+            statsA = mainStatsA;
+            statsB = mainStatsB;
+            superStatsA = getDetailedStats(playersA, true);
+            superStatsB = getDetailedStats(playersB, false);
+        } else {
+            statsA = getDetailedStats(playersA, true);
+            statsB = getDetailedStats(playersB, false);
+        }
         
         Gson gson = new Gson();
         String statsAJson = gson.toJson(statsA);
@@ -665,9 +770,16 @@ public class ScoringActivity extends AppCompatActivity {
             match.superWicketsA = wicketsA;
             match.superScoreB = scoreB;
             match.superWicketsB = wicketsB;
+            match.superStatsAJson = gson.toJson(superStatsA);
+            match.superStatsBJson = gson.toJson(superStatsB);
         }
 
         String finalWinner = winner;
+        ArrayList<PlayerStats> finalStatsA = statsA;
+        ArrayList<PlayerStats> finalStatsB = statsB;
+        ArrayList<PlayerStats> finalSuperStatsA = superStatsA;
+        ArrayList<PlayerStats> finalSuperStatsB = superStatsB;
+
         new Thread(() -> {
             db.matchDao().insert(match);
             runOnUiThread(() -> {
@@ -681,15 +793,16 @@ public class ScoringActivity extends AppCompatActivity {
                 intent.putExtra("scoreB", finalScoreB);
                 intent.putExtra("wicketsB", finalWicketsB);
                 intent.putExtra("oversB", finalOversB);
-                intent.putExtra("statsA", statsA);
-                intent.putExtra("statsB", statsB);
-                // Also pass Super Over data to ResultActivity
+                intent.putExtra("statsA", finalStatsA);
+                intent.putExtra("statsB", finalStatsB);
                 if (isSuperOver) {
                     intent.putExtra("hasSuperOver", true);
                     intent.putExtra("superScoreA", scoreA);
                     intent.putExtra("superWicketsA", wicketsA);
                     intent.putExtra("superScoreB", scoreB);
                     intent.putExtra("superWicketsB", wicketsB);
+                    intent.putExtra("superStatsA", finalSuperStatsA);
+                    intent.putExtra("superStatsB", finalSuperStatsB);
                 }
                 startActivity(intent);
                 finish();
@@ -701,18 +814,25 @@ public class ScoringActivity extends AppCompatActivity {
         ArrayList<PlayerStats> stats = new ArrayList<>();
         for (String name : players) {
             String pKey = getPlayerKey(name, isTeamA);
-            int runs = batsmanRuns.getOrDefault(pKey, 0);
-            int balls = playerBallsPlayed.getOrDefault(pKey, 0);
-            boolean isOut = outPlayers.contains(pKey);
-            String dismissal = playerDismissal.getOrDefault(pKey, "Not Out");
+            PlayerStats ps = new PlayerStats(name);
             
-            if (!isOut && (name.equals(currentStriker) || name.equals(currentNonStriker))) {
-                // Not out
-            } else if (!isOut && balls == 0) {
-                dismissal = "DNB";
-            }
+            ps.runs = batsmanRuns.getOrDefault(pKey, 0);
+            ps.balls = playerBallsPlayed.getOrDefault(pKey, 0);
+            ps.fours = batsmanFours.getOrDefault(pKey, 0);
+            ps.sixes = batsmanSixes.getOrDefault(pKey, 0);
+            ps.isOut = outPlayers.contains(pKey);
+            ps.dismissal = playerDismissal.getOrDefault(pKey, ps.balls > 0 || name.equals(currentStriker) || name.equals(currentNonStriker) ? "Not Out" : "DNB");
 
-            stats.add(new PlayerStats(name, runs, balls, dismissal, isOut));
+            ps.bowlingRuns = bowlerRunsMap.getOrDefault(pKey, 0);
+            ps.bowlingBalls = bowlerBallsMap.getOrDefault(pKey, 0);
+            ps.wickets = bowlerWicketsMap.getOrDefault(pKey, 0);
+            ps.maidens = bowlerMaidensMap.getOrDefault(pKey, 0);
+            
+            ps.catches = fielderCatches.getOrDefault(pKey, 0);
+            ps.stumpings = fielderStumpings.getOrDefault(pKey, 0);
+            ps.runOuts = fielderRunOuts.getOrDefault(pKey, 0);
+
+            stats.add(ps);
         }
         return stats;
     }

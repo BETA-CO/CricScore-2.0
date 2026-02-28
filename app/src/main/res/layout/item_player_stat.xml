@@ -4,62 +4,212 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="16dp"
     app:cardBackgroundColor="?attr/colorSurface"
-    app:cardElevation="0dp">
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/colorOutlineVariant">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
-        <!-- TOP ROW -->
-        <LinearLayout
+        <!-- HEADER: NAME & DISMISSAL -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
+            android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/tvStatName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Player Name"
                 android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="15sp"/>
-
+                android:textSize="18sp"
+                android:textColor="?attr/colorPrimary"/>
             <TextView
-                android:id="@+id/tvStatRuns"
+                android:id="@+id/tvStatDismissal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 (0)"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp"
-                android:layout_marginEnd="14dp"/>
-
-            <TextView
-                android:id="@+id/tvStatSR"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SR 0.0"
+                android:layout_below="@id/tvStatName"
+                android:text="Not Out"
+                android:textSize="13sp"
                 android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp"/>
-        </LinearLayout>
+                android:layout_marginTop="2dp"/>
+        </RelativeLayout>
 
-        <!-- DISMISSAL -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorOutlineVariant"
+            android:layout_marginVertical="12dp"/>
+
+        <!-- BATTING STATS -->
         <TextView
-            android:id="@+id/tvStatDismissal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Batting"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:alpha="0.7"
+            android:layout_marginBottom="8dp"/>
+
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Not Out"
+            android:columnCount="4"
+            android:alignmentMode="alignMargins">
+
+            <!-- Runs, Balls, Fours, Sixes -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Runs" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatRuns" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Balls" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatBalls" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Fours" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStat4s" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Sixes" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStat6s" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/tvStatSR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Strike Rate: 0.0"
             android:textSize="12sp"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginTop="3dp"/>
+            android:layout_marginTop="4dp"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <!-- BOWLING STATS -->
+        <TextView
+            android:id="@+id/labelBowling"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bowling"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:alpha="0.7"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <GridLayout
+            android:id="@+id/gridBowling"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Overs" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatOvers" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0.0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Maidens" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatMaidens" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Runs" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatBowlRuns" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Wickets" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatWickets" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/tvStatEcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Economy: 0.00"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <!-- FIELDING STATS -->
+        <TextView
+            android:id="@+id/labelFielding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fielding"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:alpha="0.7"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <GridLayout
+            android:id="@+id/gridFielding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Catches" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatCatches" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Stumpings" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatStumpings" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_columnWeight="1">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Run Outs" android:textSize="11sp" android:gravity="center"/>
+                <TextView android:id="@+id/tvStatRunOuts" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="0" android:textStyle="bold" android:gravity="center"/>
+            </LinearLayout>
+        </GridLayout>
 
     </LinearLayout>
 
