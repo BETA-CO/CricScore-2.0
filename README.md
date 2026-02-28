@@ -1,55 +1,64 @@
 # CricScore - Cricket Scoring Application
 
-CricScore is a modern Android application designed to manage and track local cricket matches with ease. It features a polished Material 3 design with full support for Light and Dark modes.
+CricScore is a modern, professional Android application designed to manage and track local cricket matches with high precision. It features a polished Material 3 design with full support for Light and Dark modes.
 
-## Application Flow
+## Application Modules & Functionality
 
-The application follows a linear and intuitive flow to set up and score a cricket match:
+### 1. Animated Splash Screen (`SplashActivity`)
+*   **Dynamic Intro**: Features a spinning cricket ball that drops and bounces into the center of the field.
+*   **Branding**: The "CricScore" title appears with a smooth zoom-in and overshoot animation for a premium feel.
 
-1.  **Home Screen (`MainActivity`)**
-    *   The entry point of the app.
-    *   Allows users to start a new match, view match history, or read basic rules.
-    *   Displays a summary of the latest match result.
+### 2. Home Screen (`MainActivity`)
+*   **Central Hub**: Start a new match, view historical records, or check match rules.
+*   **Latest Result**: Automatically displays a summary card of the most recently played match for quick reference.
 
-2.  **Match Setup (`MatchSetupActivity`)**
-    *   User enters team names (Team A vs Team B).
-    *   Defines the number of players per team and total overs for the match.
-    *   Once confirmed, the activity finishes to maintain a clean navigation stack.
+### 3. Match Setup (`MatchSetupActivity`)
+*   **Configuration**: Define team names, match length (overs), and player count.
+*   **Navigation**: Efficiently transitions to player setup while clearing the navigation stack.
 
-3.  **Player Setup (`PlayersSetupActivity`)**
-    *   This screen appears twice: once for Team A and once for Team B.
-    *   Users enter the names of all players for each team.
-    *   Features a "Fill Dummy Names" option for quick testing.
-    *   The UI dynamically updates its title and hints based on the team being configured.
+### 4. Player Setup (`PlayersSetupActivity`)
+*   **Mandatory Entry**: Ensures all player names are filled before proceeding to prevent incomplete scorecards.
+*   **Validation**: Real-time error feedback if any field is left blank.
+*   **Quick Start**: Includes a "Star Players" option to rapidly populate teams for testing or casual games.
 
-4.  **The Toss (`TossActivity`)**
-    *   A virtual coin flip decides the toss winner.
-    *   The winner chooses to either "Bat" or "Bowl" first.
-    *   The activity re-orders the teams internally so that the batting team always starts as the active team in the scoring screen.
+### 5. Interactive Toss (`TossActivity`)
+*   **Fair Play**: Uses a cryptographically secure random number generator (`SecureRandom`) and shuffled list strategy for an absolutely unbiased 50/50 toss.
+*   **Team Selection**: Before the flip, users assign which team is **HEADS** and which is **TAILS**.
+*   **Suspense Animation**: A high-speed 5-second coin spin animation precedes the result.
+*   **Outcome Decision**: The winner chooses to either Bat or Bowl, and the app automatically re-orders the batting line-up for the scoring screen.
 
-5.  **Scoring Screen (`ScoringActivity`)**
-    *   The core of the application where real-time scoring happens.
-    *   **Dynamic UI**: Shows live score, wickets, overs, and run rate.
-    *   **Player Tracking**: Allows selection of Striker, Non-Striker, and Bowler.
-    *   **Undo Functionality**: A robust 50-step undo system allows correcting scoring mistakes.
-    *   **Innings Management**: Handles transitions between the first and second innings, setting targets automatically.
-    *   **Tie-Breaker**: If scores are level at the end of the match, a **Super Over** (1 over, 2 wickets) can be initiated to decide the winner.
+### 6. Professional Scoring Engine (`ScoringActivity`)
+*   **Split UI**: Separate sections for Batters and Bowlers for better readability.
+*   **Advanced Scoring**:
+    *   Standard runs (0, 1, 2, 3, 4, 6).
+    *   **1D & 2D Buttons**: Add runs without rotating strike (ideal for overthrows or specific ground rules).
+    *   **Extras**: Comprehensive handling of Wides and No Balls.
+*   **Precision Tracking**:
+    *   **Maiden Overs**: Automatically detects and credits maidens to the bowler.
+    *   **Boundaries**: Tracks individual counts of 4s and 6s.
+    *   **Fielding**: Prompts for fielder/keeper selection on Catches, Stumpings, and Run Outs.
+*   **Strike Management**: Manual "Swap" button to adjust the striker at any time.
+*   **Undo System**: A robust 50-step undo functionality allows for instant correction of mistakes.
 
-6.  **Match Result (`ResultActivity`)**
-    *   Displays the final winner and a detailed scorecard for both teams.
-    *   Detailed statistics include runs, balls faced, strike rate, and dismissal type for every player.
+### 7. Tie-Breaker (`Super Over`)
+*   **Automatic Detection**: Triggered if scores are level after full overs/wickets.
+*   **Fresh Start**: Completely separates statistics for the Super Over from the main match. Main match data is preserved, and players start the Super Over with clean stats.
 
-7.  **Match History (`MatchHistoryActivity`)**
-    *   Uses a **Room Database** to store all completed matches.
-    *   Matches are displayed in a clean list format with the ability to delete past records.
+### 8. Comprehensive Scorecard (`ResultActivity`)
+*   **Detailed Analytics**:
+    *   **Batting**: Runs, Balls, Fours, Sixes, Strike Rate, and Dismissal details.
+    *   **Bowling**: Overs, Maidens, Runs conceded, Wickets, and Economy Rate.
+    *   **Fielding**: Catches, Stumpings, and Run Outs.
+*   **Dynamic Layout**: Only shows relevant sections (e.g., hiding the bowling section for players who didn't bowl).
+*   **Dual Scorecards**: Displays separate full scorecards for the Main Match and the Super Over if applicable.
 
-8.  **Rules (`RulesActivity`)**
-    *   A quick reference guide for basic cricket rules.
+### 9. Match History (`MatchHistoryActivity`)
+*   **Local Storage**: Uses **Room Database** for persistent storage of every game.
+*   **Review Mode**: Click any past match to view its full detailed scorecard at any time.
+*   **Data Management**: Easy deletion of old match records.
 
 ## Technical Highlights
-
-*   **Material 3 Design**: Leverages the latest Material design components for a modern look.
-*   **Adaptive Theme**: Uses dynamic theme attributes (`?attr/...`) to ensure perfect compatibility with both Dark navy and Light off-white themes.
-*   **Room Persistence**: Reliable local storage for match history.
-*   **Gson Integration**: Used for serializing complex player statistics into the database.
-*   **Clean Stack Navigation**: Every setup step finishes its activity upon completion, preventing confusing "back-loops" for the user.
+*   **Material 3**: Modern, accessible UI components.
+*   **Secure Randomness**: Ensures fair play in digital coin tosses.
+*   **State Persistence**: Sophisticated undo and Super Over state management.
+*   **Adaptive Theming**: Native look and feel in both Light and Dark modes.
