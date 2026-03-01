@@ -32,7 +32,7 @@ The core scoring logic is designed to handle the nuances of local ground rules a
 
 ---
 
-## 🛠 Detailed Application Flow (Technical Trace)
+## Detailed Application Flow (Technical Trace)
 
 Understanding the flow is critical for developers looking to modify the scoring logic or UI.
 
@@ -64,7 +64,7 @@ Understanding the flow is critical for developers looking to modify the scoring 
 
 ---
 
-## 💻 Technical Architecture
+## Technical Architecture
 *   **Language**: Java (JDK 11+)
 *   **Database**: Room Persistence Library (SQLite wrapper)
 *   **Serialization**: GSON 2.10.1
