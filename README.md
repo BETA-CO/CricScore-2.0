@@ -71,3 +71,14 @@ Understanding the flow is critical for developers looking to modify the scoring 
 *   **UI Framework**: Material Components 3 (M3)
 *   **PDF Engine**: Android Graphics (PdfDocument)
 *   **Asset Management**: Vector Drawables for resolution-independent icons.
+
+---
+
+## Future Scope
+
+### Test Cricket Management
+*   **One Day Test**: Implementation of a single-day test match format with adjusted session logic.
+*   **Infinite Overs**: Support for timeless matches or formats without ball-count restrictions.
+
+### Number Wise Play
+*   **Automatic Player Sequence**: Intelligent batting order management where players are automatically rotated onto the field based on their pre-defined roster number, minimizing manual selection between wickets.
