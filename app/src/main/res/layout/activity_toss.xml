@@ -44,6 +44,19 @@
             android:textColor="?attr/colorOnPrimary"
             app:cornerRadius="90dp"/>
 
+        <!-- EDIT TEAMS BUTTON -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditTeams"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Edit Teams"
+            android:textColor="?android:attr/textColorPrimary"
+            app:icon="@android:drawable/ic_menu_edit"
+            app:iconTint="?android:attr/textColorPrimary"
+            android:visibility="visible"/>
+
         <!-- RESULT CARD -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cvTossResult"

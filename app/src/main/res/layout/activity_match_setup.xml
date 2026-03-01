@@ -80,6 +80,23 @@
                             android:textColor="?android:attr/textColorPrimary"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Common Player -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/common_player_hint"
+                        android:layout_marginBottom="12dp"
+                        app:helperText="@string/common_player_helper">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCommonPlayer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:textColor="?android:attr/textColorPrimary"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
                     <!-- Players -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -102,7 +119,8 @@
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Total Overs">
+                        android:hint="Total Overs"
+                        android:layout_marginBottom="12dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etTotalOvers"
@@ -112,6 +130,15 @@
                             android:text="5"
                             android:textColor="?android:attr/textColorPrimary"/>
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Enable 1D/2D Checkbox -->
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbEnableDotOptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enable 1D &amp; 2D Options"
+                        android:checked="true"
+                        android:textColor="?android:attr/textColorPrimary"/>
 
                 </LinearLayout>
 

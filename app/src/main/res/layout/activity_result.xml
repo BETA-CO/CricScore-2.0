@@ -7,10 +7,12 @@
     android:background="?android:attr/colorBackground">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollViewResult"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/llResultContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -211,16 +213,35 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- BUTTON -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnHome"
-                style="@style/Widget.Material3.Button"
+            <!-- ACTION BUTTONS -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="28dp"
-                android:text="Back to Home"
-                android:textStyle="bold"
-                app:cornerRadius="32dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="28dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSharePdf"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_weight="1"
+                    android:text="Share PDF"
+                    android:textStyle="bold"
+                    app:icon="@android:drawable/ic_menu_share"
+                    app:cornerRadius="32dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHome"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_weight="1"
+                    android:text="Home"
+                    android:textStyle="bold"
+                    app:cornerRadius="32dp"/>
+            </LinearLayout>
 
         </LinearLayout>
 

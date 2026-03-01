@@ -17,9 +17,9 @@ import java.util.List;
 
 public class PlayersSetupActivity extends AppCompatActivity {
 
-    private String teamA, teamB;
+    private String teamA, teamB, commonPlayer;
     private int playerCount, totalOvers;
-    private boolean setupForTeamA;
+    private boolean setupForTeamA, enableDotOptions;
     private String playersA;
     private List<EditText> editTexts = new ArrayList<>();
 
@@ -30,9 +30,11 @@ public class PlayersSetupActivity extends AppCompatActivity {
 
         teamA = getIntent().getStringExtra("teamA");
         teamB = getIntent().getStringExtra("teamB");
+        commonPlayer = getIntent().getStringExtra("commonPlayer");
         playerCount = getIntent().getIntExtra("playerCount", 11);
         totalOvers = getIntent().getIntExtra("totalOvers", 5);
         setupForTeamA = getIntent().getBooleanExtra("setupForTeamA", true);
+        enableDotOptions = getIntent().getBooleanExtra("enableDotOptions", true);
         playersA = getIntent().getStringExtra("playersA");
 
         // Update labels based on which team we are setting up
@@ -95,20 +97,33 @@ public class PlayersSetupActivity extends AppCompatActivity {
                 Intent intent = new Intent(PlayersSetupActivity.this, PlayersSetupActivity.class);
                 intent.putExtra("teamA", teamA);
                 intent.putExtra("teamB", teamB);
+                intent.putExtra("commonPlayer", commonPlayer);
                 intent.putExtra("playerCount", playerCount);
                 intent.putExtra("totalOvers", totalOvers);
+                intent.putExtra("enableDotOptions", enableDotOptions);
                 intent.putExtra("setupForTeamA", false);
                 intent.putExtra("playersA", names.toString());
                 startActivity(intent);
                 finish();
             } else {
+                String finalPlayersA = playersA;
+                String finalPlayersB = names.toString();
+                
+                // Add common player to both teams if specified
+                if (commonPlayer != null && !commonPlayer.isEmpty()) {
+                    finalPlayersA += "," + commonPlayer;
+                    finalPlayersB += "," + commonPlayer;
+                }
+
                 Intent intent = new Intent(PlayersSetupActivity.this, TossActivity.class);
                 intent.putExtra("teamA", teamA);
                 intent.putExtra("teamB", teamB);
-                intent.putExtra("playerCount", playerCount);
+                intent.putExtra("commonPlayer", commonPlayer);
+                intent.putExtra("playerCount", playerCount + (commonPlayer != null && !commonPlayer.isEmpty() ? 1 : 0));
                 intent.putExtra("totalOvers", totalOvers);
-                intent.putExtra("playersA", playersA);
-                intent.putExtra("playersB", names.toString());
+                intent.putExtra("enableDotOptions", enableDotOptions);
+                intent.putExtra("playersA", finalPlayersA);
+                intent.putExtra("playersB", finalPlayersB);
                 startActivity(intent);
                 finish();
             }

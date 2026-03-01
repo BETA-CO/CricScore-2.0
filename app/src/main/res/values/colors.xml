@@ -3,23 +3,29 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Dark Theme Colors -->
-    <color name="dark_background">#0D0B16</color>
-    <color name="dark_surface">#1B182A</color>
-    <color name="dark_elevated_surface">#25213A</color>
-    <color name="dark_primary">#1F5D2B</color>
-    <color name="dark_primary_container">#2E7A3D</color>
-    <color name="dark_accent_red">#C62828</color>
-    <color name="dark_text_primary">#F5F3FF</color>
-    <color name="dark_text_secondary">#B8B2CC</color>
+    <!-- Refined Dark Theme Colors (Material 3 inspired) -->
+    <color name="dark_background">#1A1C19</color>
+    <color name="dark_surface">#222521</color>
+    <color name="dark_elevated_surface">#2A2E28</color>
+    <color name="dark_primary">#89D991</color>
+    <color name="dark_on_primary">#003912</color>
+    <color name="dark_primary_container">#00531D</color>
+    <color name="dark_on_primary_container">#A4F6AC</color>
+    <color name="dark_accent_red">#FFB4AB</color>
+    <color name="dark_on_accent_red">#690005</color>
+    <color name="dark_text_primary">#E2E3DD</color>
+    <color name="dark_text_secondary">#C1C9BE</color>
 
-    <!-- Light Theme Colors -->
-    <color name="light_background">#F8F9FC</color>
-    <color name="light_surface">#FFFFFF</color>
-    <color name="light_elevated_surface">#F1F3F6</color>
+    <!-- Refined Light Theme Colors (Material 3 inspired) -->
+    <color name="light_background">#FCFDF6</color>
+    <color name="light_surface">#FCFDF6</color>
+    <color name="light_elevated_surface">#F0F1EB</color>
     <color name="light_primary">#1F5D2B</color>
-    <color name="light_primary_container">#DCEFD9</color>
-    <color name="light_accent_red">#C62828</color>
-    <color name="light_text_primary">#1B1B1F</color>
-    <color name="light_text_secondary">#666C7A</color>
+    <color name="light_on_primary">#FFFFFF</color>
+    <color name="light_primary_container">#A4F6AC</color>
+    <color name="light_on_primary_container">#002108</color>
+    <color name="light_accent_red">#BA1A1A</color>
+    <color name="light_on_accent_red">#FFFFFF</color>
+    <color name="light_text_primary">#1A1C19</color>
+    <color name="light_text_secondary">#424940</color>
 </resources>

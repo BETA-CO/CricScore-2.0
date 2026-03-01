@@ -41,7 +41,7 @@
         android:text="CricScore"
         android:textSize="48sp"
         android:textStyle="bold"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:alpha="0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

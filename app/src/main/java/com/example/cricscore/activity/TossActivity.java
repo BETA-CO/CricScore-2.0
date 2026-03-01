@@ -23,10 +23,11 @@ import java.util.List;
 
 public class TossActivity extends AppCompatActivity {
 
-    private String teamA, teamB, playersA, playersB;
+    private String teamA, teamB, commonPlayer, playersA, playersB;
     private int playerCount, totalOvers;
+    private boolean enableDotOptions;
     private TextView tvTossResult;
-    private MaterialButton btnStartScoring, btnFlip;
+    private MaterialButton btnStartScoring, btnFlip, btnEditTeams;
     private String tossWinner;
     private String battingTeam;
     private boolean isFlipping = false;
@@ -42,14 +43,17 @@ public class TossActivity extends AppCompatActivity {
 
         teamA = getIntent().getStringExtra("teamA");
         teamB = getIntent().getStringExtra("teamB");
+        commonPlayer = getIntent().getStringExtra("commonPlayer");
         playerCount = getIntent().getIntExtra("playerCount", 11);
         totalOvers = getIntent().getIntExtra("totalOvers", 5);
+        enableDotOptions = getIntent().getBooleanExtra("enableDotOptions", true);
         playersA = getIntent().getStringExtra("playersA");
         playersB = getIntent().getStringExtra("playersB");
         
         tvTossResult = findViewById(R.id.tvTossResult);
         btnStartScoring = findViewById(R.id.btnStartScoring);
         btnFlip = findViewById(R.id.btnFlip);
+        btnEditTeams = findViewById(R.id.btnEditTeams);
 
         btnFlip.setOnClickListener(v -> {
             if (isFlipping) return;
@@ -58,6 +62,20 @@ public class TossActivity extends AppCompatActivity {
             } else {
                 startCoinFlip();
             }
+        });
+
+        btnEditTeams.setOnClickListener(v -> {
+            // Take user back to Team A setup page
+            Intent intent = new Intent(TossActivity.this, PlayersSetupActivity.class);
+            intent.putExtra("teamA", teamA);
+            intent.putExtra("teamB", teamB);
+            intent.putExtra("commonPlayer", commonPlayer);
+            intent.putExtra("playerCount", playerCount - (commonPlayer != null && !commonPlayer.isEmpty() ? 1 : 0));
+            intent.putExtra("totalOvers", totalOvers);
+            intent.putExtra("enableDotOptions", enableDotOptions);
+            intent.putExtra("setupForTeamA", true);
+            startActivity(intent);
+            finish();
         });
 
         btnStartScoring.setOnClickListener(v -> {
@@ -80,7 +98,9 @@ public class TossActivity extends AppCompatActivity {
                 intent.putExtra("playersB", playersB);
             }
             
+            intent.putExtra("commonPlayer", commonPlayer);
             intent.putExtra("totalOvers", totalOvers);
+            intent.putExtra("enableDotOptions", enableDotOptions);
             intent.putExtra("maxWicketsA", playerCount - 1);
             intent.putExtra("maxWicketsB", playerCount - 1);
             startActivity(intent);
@@ -105,6 +125,7 @@ public class TossActivity extends AppCompatActivity {
     private void startCoinFlip() {
         isFlipping = true;
         btnFlip.setEnabled(false);
+        btnEditTeams.setVisibility(View.GONE); // Hide edit button when flip starts
         findViewById(R.id.cvTossResult).setVisibility(View.GONE);
         btnStartScoring.setVisibility(View.GONE);
 
@@ -170,6 +191,7 @@ public class TossActivity extends AppCompatActivity {
         tvTossResult.setText(decisionText);
         findViewById(R.id.cvTossResult).setVisibility(View.VISIBLE);
         btnStartScoring.setVisibility(View.VISIBLE);
+        btnEditTeams.setVisibility(View.GONE); // Hide edit button after toss is completed
         
         btnFlip.setText("FLIP COIN");
         btnFlip.setRotationY(0);

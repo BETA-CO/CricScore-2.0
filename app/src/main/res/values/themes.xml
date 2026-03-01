@@ -3,11 +3,11 @@
     <style name="Base.Theme.CricScore" parent="Theme.Material3.Light.NoActionBar">
         <!-- Light Theme Colors -->
         <item name="colorPrimary">@color/light_primary</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/light_on_primary</item>
         <item name="colorPrimaryContainer">@color/light_primary_container</item>
-        <item name="colorOnPrimaryContainer">@color/light_primary</item>
+        <item name="colorOnPrimaryContainer">@color/light_on_primary_container</item>
         <item name="colorSecondary">@color/light_accent_red</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/light_on_accent_red</item>
 
         <!-- Background and Surface -->
         <item name="android:windowBackground">@color/light_background</item>

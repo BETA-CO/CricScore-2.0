@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CricScore</string>
+    <string name="common_player_hint">Common Player (Optional)</string>
+    <string name="common_player_helper">Plays for both teams</string>
+    <string name="app_version_display">v1.0.1</string>
 </resources>

@@ -63,6 +63,17 @@
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnPrimary"
                     android:alpha="0.8"/>
+
+                <TextView
+                    android:id="@+id/tvTargetStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"/>
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -215,6 +226,31 @@
                 android:text="6"/>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWide"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Wide"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNoBall"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="No Ball"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWicket"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Wicket"
+                app:backgroundTint="?attr/colorSecondary"/>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn1D"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
@@ -230,30 +266,6 @@
                 android:layout_columnWeight="1"
                 android:text="2D"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnWicket"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:text="W"
-                app:backgroundTint="?attr/colorSecondary"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnWide"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:text="WD"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnNoBall"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:text="NB"/>
         </GridLayout>
 
         <!-- ACTION BUTTONS -->
@@ -293,8 +305,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Finish"
-            app:backgroundTint="?attr/colorPrimaryContainer"
-            app:rippleColor="?attr/colorPrimary"/>
+            app:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
+            app:rippleColor="?attr/colorPrimaryContainer"/>
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

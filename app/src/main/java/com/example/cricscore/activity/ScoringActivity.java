@@ -28,10 +28,11 @@ import java.util.Set;
 
 public class ScoringActivity extends AppCompatActivity {
 
-    private String teamA, teamB;
+    private String teamA, teamB, commonPlayer;
     private List<String> playersA = new ArrayList<>(), playersB = new ArrayList<>();
     private int totalOvers;
     private int maxWicketsA, maxWicketsB;
+    private boolean enableDotOptions;
     
     private int scoreA = 0, wicketsA = 0, ballsA = 0;
     private int scoreB = 0, wicketsB = 0, ballsB = 0;
@@ -68,7 +69,7 @@ public class ScoringActivity extends AppCompatActivity {
     
     private Set<String> outPlayers = new HashSet<>();
 
-    private TextView tvCurrentInnings, tvScore, tvOvers, tvRunRate, tvStriker, tvNonStriker, tvBowler, tvThisOver;
+    private TextView tvCurrentInnings, tvScore, tvOvers, tvRunRate, tvStriker, tvNonStriker, tvBowler, tvThisOver, tvTargetStatus;
     private AppDatabase db;
 
     public static class PlayerStats implements Serializable {
@@ -143,11 +144,13 @@ public class ScoringActivity extends AppCompatActivity {
 
         teamA = getIntent().getStringExtra("teamA");
         teamB = getIntent().getStringExtra("teamB");
+        commonPlayer = getIntent().getStringExtra("commonPlayer");
         String pA = getIntent().getStringExtra("playersA");
         String pB = getIntent().getStringExtra("playersB");
         totalOvers = getIntent().getIntExtra("totalOvers", 5);
         maxWicketsA = getIntent().getIntExtra("maxWicketsA", 10);
         maxWicketsB = getIntent().getIntExtra("maxWicketsB", 10);
+        enableDotOptions = getIntent().getBooleanExtra("enableDotOptions", true);
 
         playersA = parsePlayers(pA, teamA, maxWicketsA + 1);
         playersB = parsePlayers(pB, teamB, maxWicketsB + 1);
@@ -162,6 +165,7 @@ public class ScoringActivity extends AppCompatActivity {
         tvNonStriker = findViewById(R.id.tvNonStriker);
         tvBowler = findViewById(R.id.tvBowler);
         tvThisOver = findViewById(R.id.tvThisOver);
+        tvTargetStatus = findViewById(R.id.tvTargetStatus);
 
         tvStriker.setOnClickListener(v -> showPlayerPicker(0));
         tvNonStriker.setOnClickListener(v -> showPlayerPicker(1));
@@ -199,6 +203,12 @@ public class ScoringActivity extends AppCompatActivity {
 
         findViewById(R.id.btnUndo).setOnClickListener(v -> undo());
         findViewById(R.id.btnStopMatch).setOnClickListener(v -> showStopMatchDialog());
+        
+        // Hide 1D and 2D buttons if option is disabled
+        if (!enableDotOptions) {
+            findViewById(R.id.btn1D).setVisibility(View.GONE);
+            findViewById(R.id.btn2D).setVisibility(View.GONE);
+        }
     }
 
     private void showStopMatchDialog() {
@@ -349,7 +359,7 @@ public class ScoringActivity extends AppCompatActivity {
         findViewById(R.id.btn1D).setOnClickListener(v -> addDotWithRuns(1));
         findViewById(R.id.btn2D).setOnClickListener(v -> addDotWithRuns(2));
         findViewById(R.id.btnWicket).setOnClickListener(v -> handleWicketClick());
-        findViewById(R.id.btnWide).setOnClickListener(v -> addExtra("WD", 1));
+        findViewById(R.id.btnWide).setOnClickListener(v -> showWideDialog());
         findViewById(R.id.btnNoBall).setOnClickListener(v -> showNoBallDialog());
     }
 
@@ -423,6 +433,19 @@ public class ScoringActivity extends AppCompatActivity {
             checkMatchEnd();
         }
         updateUI();
+    }
+
+    private void showWideDialog() {
+        if (!checkPlayersSelected()) return;
+        String[] options = {"Wide (Only)", "Wide + 1 Run", "Wide + 2 Runs", "Wide + 3 Runs", "Wide + 4 Runs"};
+        int[] runValues = {0, 1, 2, 3, 4};
+        
+        new AlertDialog.Builder(this)
+                .setTitle("Wide Extras")
+                .setItems(options, (dialog, which) -> {
+                    addExtra("WD", 1 + runValues[which]);
+                })
+                .show();
     }
 
     private void handleWicketClick() {
@@ -566,7 +589,7 @@ public class ScoringActivity extends AppCompatActivity {
         bowlerRunsMap.put(boKey, bowlerRunsMap.getOrDefault(boKey, 0) + runs);
         currentOverRuns += runs;
         currentOverHasExtras = true;
-        currentOverHistory.add(type);
+        currentOverHistory.add(type + (runs > 1 ? "+" + (runs - 1) : ""));
 
         if (isInnings1) {
             scoreA += runs;
@@ -635,13 +658,27 @@ public class ScoringActivity extends AppCompatActivity {
         mainScoreA = scoreA; mainWicketsA = wicketsA; mainBallsA = ballsA;
         mainScoreB = scoreB; mainWicketsB = wicketsB; mainBallsB = ballsB;
         
+        // RULE: The team that batted first in main match should bat SECOND in Super Over.
+        // So we swap teams now so Team B (who was Team 2) starts as Team 1 in Super Over.
+        String tempT = teamA; teamA = teamB; teamB = tempT;
+        List<String> tempP = playersA; playersA = playersB; playersB = tempP;
+        
+        // Swap main match data to stay aligned with new team labels for ResultActivity
+        int tempS = mainScoreA; mainScoreA = mainScoreB; mainScoreB = tempS;
+        int tempW = mainWicketsA; mainWicketsA = mainWicketsB; mainWicketsB = tempW;
+        int tempB = mainBallsA; mainBallsA = mainBallsB; mainBallsB = tempB;
+        
+        ArrayList<PlayerStats> tempStats = mainStatsA;
+        mainStatsA = mainStatsB;
+        mainStatsB = tempStats;
+
         isSuperOver = true;
         isInnings1 = true;
         totalOvers = 1;
         maxWicketsA = 2; 
         maxWicketsB = 2;
         
-        // RESET GAME STATE FOR SUPER OVER
+        // RESET GAME STATE FOR SUPER OVER (Stats are now 0)
         scoreA = 0; wicketsA = 0; ballsA = 0;
         scoreB = 0; wicketsB = 0; ballsB = 0;
         
@@ -679,11 +716,22 @@ public class ScoringActivity extends AppCompatActivity {
             tvScore.setText(scoreA + "/" + wicketsA);
             tvOvers.setText("Overs: " + getOvers(ballsA) + " / " + totalOvers);
             tvRunRate.setText("CRR: " + String.format(Locale.US, "%.2f", getRunRate(scoreA, ballsA)));
+            tvTargetStatus.setVisibility(View.GONE);
         } else {
             tvCurrentInnings.setText(inningsTitle + teamB + " Batting (Target: " + (scoreA + 1) + ")");
             tvScore.setText(scoreB + "/" + wicketsB);
             tvOvers.setText("Overs: " + getOvers(ballsB) + " / " + totalOvers);
             tvRunRate.setText("CRR: " + String.format(Locale.US, "%.2f", getRunRate(scoreB, ballsB)));
+            
+            int runsNeeded = (scoreA + 1) - scoreB;
+            int ballsRemaining = (totalOvers * 6) - ballsB;
+            
+            if (runsNeeded > 0) {
+                tvTargetStatus.setText(runsNeeded + " runs needed from " + ballsRemaining + " balls");
+                tvTargetStatus.setVisibility(View.VISIBLE);
+            } else {
+                tvTargetStatus.setVisibility(View.GONE);
+            }
         }
 
         String sKey = getPlayerKey(currentStriker, isInnings1);
